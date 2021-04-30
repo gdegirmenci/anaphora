@@ -1,0 +1,65 @@
+version: '2'
+services:
+    anaphora_nginx:
+        container_name: anaphora_nginx
+        image: nginx:alpine
+        restart: unless-stopped
+        tty: true
+        ports:
+            - 80:80
+            - 443:443
+        volumes:
+            - ./:/var/www
+            - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+        networks:
+            - anaphora_network
+
+    anaphora_php:
+        container_name: anaphora_php
+        build: ./docker
+        restart: unless-stopped
+        environment:
+            DB_HOST: anaphora_mysql
+            DB_DATABASE: anaphora_db
+            DB_USERNAME: anaphora
+            DB_PASSWORD: 4N4PH0RA
+            DB_CONNECTION: mysql
+        links:
+            - anaphora_mysql
+            - anaphora_redis
+        volumes:
+            - ./:/var/www
+            - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+        networks:
+            - anaphora_network
+
+    anaphora_mysql:
+        container_name: anaphora_mysql
+        image: mysql:latest
+        restart: unless-stopped
+        ports:
+            - 3306:3306
+        command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--default-authentication-plugin=mysql_native_password']
+        volumes:
+            - .docker/data/mysql:/var/lib/mysql
+        environment:
+            MYSQL_DATABASE: anaphora_db
+            MYSQL_USER: anaphora
+            MYSQL_PASSWORD: 4N4PH0RA
+            MYSQL_ROOT_PASSWORD: 4N4PH0RA
+        networks:
+            - anaphora_network
+
+    anaphora_redis:
+        container_name: anaphora_redis
+        image: redis:latest
+        restart: unless-stopped
+        ports:
+            - 6379:6379
+        volumes:
+            - .docker/data/redis:/data
+        networks:
+            - anaphora_network
+networks:
+    anaphora_network:
+        driver: bridge
