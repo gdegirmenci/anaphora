@@ -3,7 +3,8 @@
 namespace Tests\Unit\Repositories\Campaign;
 
 use App\Repositories\Campaign\CampaignRepositoryInterface;
-use PHPUnit\Framework\MockObject\MockObject;
+use Mockery;
+use Mockery\Mock;
 use Tests\TestCase;
 use App\Models\Campaign;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -19,7 +20,7 @@ class CampaignRepositoryTest extends TestCase
 {
     use WithFaker;
 
-    /** @var Campaign|MockObject */
+    /** @var Campaign|Mock */
     private $campaign;
     /** @var CampaignRepositoryInterface */
     private $campaignRepository;
@@ -31,7 +32,7 @@ class CampaignRepositoryTest extends TestCase
     {
         parent::setUp();
 
-        $this->campaign = $this->getMockBuilder(Campaign::class)->addMethods(['paginate', 'create'])->getMock();
+        $this->campaign = Mockery::mock(Campaign::class)->makePartial();
         $this->campaignRepository = new CampaignRepository($this->campaign);
     }
 
@@ -45,7 +46,8 @@ class CampaignRepositoryTest extends TestCase
         $perPage = random_int(1, 10);
         $paginatorMock = $this->createMock(LengthAwarePaginator::class);
 
-        $this->campaign->expects($this->once())->method('paginate')->with($perPage)->willReturn($paginatorMock);
+        $this->campaign->shouldReceive('with')->once()->with('log')->andReturnSelf();
+        $this->campaign->shouldReceive('paginate')->once()->with($perPage)->andReturn($paginatorMock);
 
         $this->assertEquals($paginatorMock, $this->campaignRepository->paginate($perPage));
     }
@@ -58,7 +60,7 @@ class CampaignRepositoryTest extends TestCase
     {
         $fields = [$this->faker->name => $this->faker->name];
 
-        $this->campaign->expects($this->once())->method('create')->with($fields);
+        $this->campaign->shouldReceive('create')->once()->with($fields);
 
         $this->campaignRepository->create($fields);
     }

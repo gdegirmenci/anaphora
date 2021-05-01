@@ -2,8 +2,12 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\CampaignStatusEnums;
+use App\Models\CampaignLog;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 /**
  * Class CampaignResource
@@ -13,7 +17,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property string template
  * @property string type
  * @property int status
- * @property string created_at
+ * @property Carbon created_at
+ * @property CampaignLog log
  */
 class CampaignResource extends JsonResource
 {
@@ -27,9 +32,10 @@ class CampaignResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'template' => $this->template,
-            'type' => $this->type,
-            'status' => $this->status,
-            'createdAt' => $this->created_at,
+            'status' => CampaignStatusEnums::STATUS_ALIASES[$this->status],
+            'to' => $this->log->to,
+            'provider' => Str::ucfirst($this->log->provider),
+            'date' => $this->created_at->toRfc850String(),
         ];
     }
 }

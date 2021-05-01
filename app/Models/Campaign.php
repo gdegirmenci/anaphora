@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Carbon;
 
 /**
  * Class Campaign
@@ -12,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string template
  * @property string type
  * @property int status
- * @property string created_at
+ * @property Carbon created_at
  */
 class Campaign extends Model
 {
@@ -23,4 +25,12 @@ class Campaign extends Model
         'type',
         'status',
     ];
+
+    /**
+     * @return HasOne
+     */
+    public function log(): HasOne
+    {
+        return $this->hasOne(CampaignLog::class, 'campaign_id', 'id');
+    }
 }

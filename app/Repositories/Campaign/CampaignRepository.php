@@ -28,7 +28,7 @@ class CampaignRepository implements CampaignRepositoryInterface
      */
     public function paginate(int $perPage): LengthAwarePaginator
     {
-        return $this->campaign->paginate($perPage);
+        return $this->campaign->with('log')->paginate($perPage);
     }
 
     /**
