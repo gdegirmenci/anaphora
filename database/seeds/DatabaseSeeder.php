@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\CampaignLog;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -9,8 +10,8 @@ class DatabaseSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
-        // $this->call(UserSeeder::class);
+        factory(CampaignLog::class, 50)->create();
     }
 }
