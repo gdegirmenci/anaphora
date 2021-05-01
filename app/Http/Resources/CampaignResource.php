@@ -33,8 +33,8 @@ class CampaignResource extends JsonResource
             'name' => $this->name,
             'template' => $this->template,
             'status' => CampaignStatusEnums::STATUS_ALIASES[$this->status],
-            'to' => $this->log->to,
-            'provider' => Str::ucfirst($this->log->provider),
+            'to' => optional($this->log)->to,
+            'provider' => Str::ucfirst(optional($this->log)->provider),
             'date' => $this->created_at->toRfc850String(),
         ];
     }

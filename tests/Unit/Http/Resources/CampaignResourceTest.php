@@ -51,4 +51,28 @@ class CampaignResourceTest extends TestCase
             $campaignResource->resolve()
         );
     }
+
+    /**
+     * @test
+     * @covers ::toArray
+     */
+    function it_should_return_array_without_log_relation_when_it_is_not_loaded()
+    {
+        /** @var Campaign $campaign */
+        $campaign = factory(Campaign::class)->make(['id' => random_int(1, 10), 'created_at' => Carbon::create()]);
+        $campaignResource = new CampaignResource($campaign);
+
+        $this->assertEquals(
+            [
+                'id' => $campaign->id,
+                'name' => $campaign->name,
+                'template' => $campaign->template,
+                'status' => self::STATUS_ALIASES[$campaign->status],
+                'to' => null,
+                'provider' => null,
+                'date' => $campaign->created_at->toRfc850String(),
+            ],
+            $campaignResource->resolve()
+        );
+    }
 }

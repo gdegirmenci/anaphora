@@ -17,6 +17,11 @@ class CampaignControllerTest extends TestCase
     use DatabaseMigrations, WithFaker;
 
     const DEFAULT_PER_PAGE = 10;
+    const STATUS_ALIASES = [
+        0 => 'Queue',
+        1 => 'Sent',
+        2 => 'Failed',
+    ];
 
     /**
      * @test
@@ -31,8 +36,7 @@ class CampaignControllerTest extends TestCase
                     'id' => $campaign->id,
                     'name' => $campaign->name,
                     'template' => $campaign->template,
-                    'type' => $campaign->type,
-                    'status' => $campaign->status,
+                    'status' => self::STATUS_ALIASES[$campaign->status],
                 ];
             });
 
