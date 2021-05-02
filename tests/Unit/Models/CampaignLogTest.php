@@ -14,20 +14,15 @@ use Tests\Suites\ModelTestSuite;
  * @package Tests\Unit\Models
  * @coversDefaultClass \App\Models\Campaign
  */
-class CampaignTest extends ModelTestSuite
+class CampaignLogTest extends ModelTestSuite
 {
     const QUEUED = 0;
     const SENT = 1;
     const FAILED = 2;
 
-    /**
-     * @var Campaign|MockObject
-     */
+    /** @var CampaignLog|MockObject */
     private $model;
-
-    /**
-     * @var Builder|MockObject
-     */
+    /** @var Builder|MockObject */
     private $builder;
 
     /**
@@ -35,7 +30,7 @@ class CampaignTest extends ModelTestSuite
      */
     public function setModel(): void
     {
-        $this->model = $this->getMockBuilder(Campaign::class)->onlyMethods(['hasOne'])->getMock();
+        $this->model = $this->getMockBuilder(CampaignLog::class)->onlyMethods(['hasOne'])->getMock();
         $this->builder = $this->getMockBuilder(Builder::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['where'])
@@ -44,7 +39,7 @@ class CampaignTest extends ModelTestSuite
 
     /**
      * @test
-     * @covers ::log
+     * @covers ::campaign
      */
     function it_should_have_has_one_relation()
     {
@@ -53,10 +48,10 @@ class CampaignTest extends ModelTestSuite
         $this->model
             ->expects($this->once())
             ->method('hasOne')
-            ->with(CampaignLog::class, 'campaign_id', 'id')
+            ->with(Campaign::class, 'id', 'campaign_id')
             ->willReturn($hasOne);
 
-        $this->assertEquals($hasOne, $this->model->log());
+        $this->assertEquals($hasOne, $this->model->campaign());
     }
 
     /**

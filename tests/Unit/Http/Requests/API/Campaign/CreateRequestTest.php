@@ -49,8 +49,11 @@ class CreateRequestTest extends RequestTestSuite
     {
         return [
             ['name', 'required|string'],
+            ['subject', 'required|string'],
+            ['from', 'required|array'],
+            ['reply', 'required|array'],
+            ['to', 'required|array'],
             ['template', 'required|string'],
-            ['type', 'required|string'],
         ];
     }
 }

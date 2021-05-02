@@ -5,18 +5,15 @@ use App\Models\CampaignLog;
 use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Carbon;
 
 /**
  * @var Factory $factory
  */
 $factory->define(Campaign::class, function (Faker $faker) {
     return [
-        'name' => $faker->name,
+        'name' => $faker->catchPhrase,
         'template' => $faker->text,
         'type' => 'text',
-        'status' => random_int(0, 2),
-        'created_at' => Carbon::create(),
     ];
 });
 
@@ -25,22 +22,23 @@ $factory->define(CampaignLog::class, function (Faker $faker) {
         'campaign_id' => (factory(Campaign::class)->create())->id,
         'to' => $faker->email,
         'provider' => Arr::random(['sendgrid', 'mailjet']),
+        'status' => random_int(0, 2),
     ];
 });
 
-$factory->state(Campaign::class, 'queued', function () {
+$factory->state(CampaignLog::class, 'queued', function () {
     return [
         'status' => 0,
     ];
 });
 
-$factory->state(Campaign::class, 'sent', function () {
+$factory->state(CampaignLog::class, 'sent', function () {
     return [
         'status' => 1,
     ];
 });
 
-$factory->state(Campaign::class, 'failed', function () {
+$factory->state(CampaignLog::class, 'failed', function () {
     return [
         'status' => 2,
     ];

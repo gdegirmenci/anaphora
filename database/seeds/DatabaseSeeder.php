@@ -1,8 +1,12 @@
 <?php
 
+use App\Models\Campaign;
 use App\Models\CampaignLog;
 use Illuminate\Database\Seeder;
 
+/**
+ * Class DatabaseSeeder
+ */
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -12,6 +16,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        factory(CampaignLog::class, 50)->create();
+        factory(Campaign::class, 50)
+            ->create()
+            ->each(function (Campaign $campaign) {
+                $logCount = random_int(1, 3);
+                factory(CampaignLog::class, $logCount)->create(['campaign_id' => $campaign->id]);
+            });
     }
 }

@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['namespace' => 'API\Campaign', 'prefix' => 'campaigns'], function (Router $route) {
     $route->get('/get', 'CampaignController@index')->name('get-campaigns');
-    $route->get('/create', 'CampaignController@create')->name('create-campaign');
+    $route->post('/create', 'CampaignController@create')->name('create-campaign');
 });
 
 Route::group(['namespace' => 'API', 'prefix' => '/dashboard'], function (Router $route) {

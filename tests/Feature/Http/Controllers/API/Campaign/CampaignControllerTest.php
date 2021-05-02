@@ -2,8 +2,9 @@
 
 namespace Tests\Feature\Http\Controllers\API\Campaign;
 
+use App\Models\CampaignLog;
+use Illuminate\Support\Str;
 use Tests\TestCase;
-use App\Models\Campaign;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
@@ -30,19 +31,41 @@ class CampaignControllerTest extends TestCase
      */
     function it_should_return_campaigns()
     {
-        $campaigns = factory(Campaign::class, 2)
+        $campaignLogs = factory(CampaignLog::class, 2)
             ->create()
-            ->transform(function (Campaign $campaign) {
+            ->transform(function (CampaignLog $campaignLog) {
                 return [
-                    'id' => $campaign->id,
-                    'name' => $campaign->name,
-                    'template' => $campaign->template,
-                    'status' => self::STATUS_ALIASES[$campaign->status],
+                    'id' => $campaignLog->campaign->id,
+                    'name' => $campaignLog->campaign->name,
+                    'status' => self::STATUS_ALIASES[$campaignLog->status],
+                    'to' => $campaignLog->to,
+                    'provider' => Str::ucfirst($campaignLog->provider),
+                    'date' => $campaignLog->created_at->toRfc850String(),
                 ];
             });
 
         $response = $this->get(route('get-campaigns', ['perPage' => self::DEFAULT_PER_PAGE]));
 
-        $response->assertOk()->assertJson(['data' => $campaigns->toArray()]);
+        $response->assertOk()->assertJsonFragment(['data' => $campaignLogs->toArray()]);
+    }
+
+    /**
+     * @test
+     * @covers ::create
+     */
+    function it_should_create_campaign()
+    {
+        $requestData = [
+            'name' => $this->faker->word,
+            'subject' => $this->faker->sentence,
+            'from' => ['name' => $this->faker->name, 'email' => $this->faker->email],
+            'reply' => ['name' => $this->faker->name, 'email' => $this->faker->email],
+            'to' => ['name' => $this->faker->name, 'email' => $this->faker->email],
+            'template' => $this->faker->text,
+        ];
+        $response = $this->post(route('create-campaign', $requestData));
+
+        $response->assertOk();
+        $this->assertDatabaseHas('campaigns', ['name' => $requestData['name'], 'template' => $requestData['template']]);
     }
 }

@@ -22,6 +22,7 @@ class CreateCampaignLogsTable extends Migration
             $table->foreign('campaign_id')->references('id')->on('campaigns');
             $table->string('to');
             $table->string('provider');
+            $table->tinyInteger('status')->default(0);
             $table->softDeletes();
             $table->timestamps();
         });

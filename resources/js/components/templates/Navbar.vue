@@ -23,13 +23,20 @@
         Campaigns
       </v-btn>
       <v-spacer />
+      <create />
     </v-container>
   </v-app-bar>
 </template>
 
 <script>
+import Create from './campaigns/Create';
+
 export default {
     name: 'Navbar',
+
+    components: {
+        Create
+    },
 
     data () {
         return {

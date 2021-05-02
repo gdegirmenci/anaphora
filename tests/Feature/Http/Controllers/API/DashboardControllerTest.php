@@ -2,8 +2,8 @@
 
 namespace Tests\Feature\Http\Controllers\API;
 
+use App\Models\CampaignLog;
 use Tests\TestCase;
-use App\Models\Campaign;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
@@ -33,11 +33,11 @@ class DashboardControllerTest extends TestCase
         $sentCount = random_int(1, 10);
         $failedCount = random_int(1, 10);
         // Queued campaigns
-        factory(Campaign::class, $queuedCount)->state('queued')->create();
+        factory(CampaignLog::class, $queuedCount)->state('queued')->create();
         // Sent campaigns
-        factory(Campaign::class, $sentCount)->state('sent')->create();
+        factory(CampaignLog::class, $sentCount)->state('sent')->create();
         // Failed campaigns
-        factory(Campaign::class, $failedCount)->state('failed')->create();
+        factory(CampaignLog::class, $failedCount)->state('failed')->create();
         $dashboardData = [
             'overview' => ['queued' => $queuedCount, 'sent' => $sentCount, 'failed' => $failedCount],
             'providerStatus' => [

@@ -21,7 +21,6 @@ class CreateCampaignsTable extends Migration
             $table->string('name');
             $table->text('template');
             $table->string('type');
-            $table->tinyInteger('status')->default(0);
             $table->softDeletes();
             $table->timestamps();
         });

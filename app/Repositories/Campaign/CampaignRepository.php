@@ -3,6 +3,7 @@
 namespace App\Repositories\Campaign;
 
 use App\Models\Campaign;
+use App\Models\CampaignLog;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
@@ -12,14 +13,17 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class CampaignRepository implements CampaignRepositoryInterface
 {
     private $campaign;
+    private $campaignLog;
 
     /**
      * CampaignRepository constructor.
      * @param Campaign $campaign
+     * @param CampaignLog $campaignLog
      */
-    public function __construct(Campaign $campaign)
+    public function __construct(Campaign $campaign, CampaignLog $campaignLog)
     {
         $this->campaign = $campaign;
+        $this->campaignLog = $campaignLog;
     }
 
     /**
@@ -28,7 +32,7 @@ class CampaignRepository implements CampaignRepositoryInterface
      */
     public function paginate(int $perPage): LengthAwarePaginator
     {
-        return $this->campaign->with('log')->paginate($perPage);
+        return $this->campaignLog->with('campaign')->paginate($perPage);
     }
 
     /**
@@ -45,7 +49,7 @@ class CampaignRepository implements CampaignRepositoryInterface
      */
     public function totalQueued(): int
     {
-        return $this->campaign->queued()->count();
+        return $this->campaignLog->queued()->count();
     }
 
     /**
@@ -53,7 +57,7 @@ class CampaignRepository implements CampaignRepositoryInterface
      */
     public function totalSent(): int
     {
-        return $this->campaign->sent()->count();
+        return $this->campaignLog->sent()->count();
     }
 
     /**
@@ -61,6 +65,6 @@ class CampaignRepository implements CampaignRepositoryInterface
      */
     public function totalFailed(): int
     {
-        return $this->campaign->failed()->count();
+        return $this->campaignLog->failed()->count();
     }
 }

@@ -6,6 +6,8 @@ use App\Http\Requests\API\Campaign\CreateRequest;
 use App\Http\Requests\API\Campaign\PaginateRequest;
 use App\Http\Resources\CampaignResource;
 use App\Repositories\Campaign\CampaignRepositoryInterface;
+use App\Services\CampaignService;
+use App\ValueObjects\Payloads\CampaignPayload;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -24,18 +26,19 @@ class CampaignController extends Controller
     public function index(
         PaginateRequest $request,
         CampaignRepositoryInterface $campaignRepository
-    ): AnonymousResourceCollection {
+    ) {
         return CampaignResource::collection($campaignRepository->paginate($request->perPage()));
     }
 
     /**
      * @param CreateRequest $request
+     * @param CampaignService $campaignService
      * @return JsonResponse
      */
-    public function create(CreateRequest $request, CampaignRepositoryInterface $campaignRepository): JsonResponse
+    public function create(CreateRequest $request, CampaignService $campaignService): JsonResponse
     {
-        $campaignRepository->create($request->toArray());
+        $campaignPayload = new CampaignPayload($request->toArray());
 
-        return $this->success();
+        return new JsonResponse(['data' => $campaignService->create($campaignPayload)]);
     }
 }

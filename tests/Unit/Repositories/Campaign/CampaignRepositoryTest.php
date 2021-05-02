@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Repositories\Campaign;
 
+use App\Models\CampaignLog;
 use App\Repositories\Campaign\CampaignRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Mockery;
@@ -23,6 +24,8 @@ class CampaignRepositoryTest extends TestCase
 
     /** @var Campaign|Mock */
     private $campaign;
+    /** @var CampaignLog|Mock */
+    private $campaignLog;
     /** @var CampaignRepositoryInterface */
     private $campaignRepository;
 
@@ -34,7 +37,8 @@ class CampaignRepositoryTest extends TestCase
         parent::setUp();
 
         $this->campaign = Mockery::mock(Campaign::class)->makePartial();
-        $this->campaignRepository = new CampaignRepository($this->campaign);
+        $this->campaignLog = Mockery::mock(CampaignLog::class)->makePartial();
+        $this->campaignRepository = new CampaignRepository($this->campaign, $this->campaignLog);
     }
 
     /**
@@ -47,8 +51,8 @@ class CampaignRepositoryTest extends TestCase
         $perPage = random_int(1, 10);
         $paginatorMock = $this->createMock(LengthAwarePaginator::class);
 
-        $this->campaign->shouldReceive('with')->once()->with('log')->andReturnSelf();
-        $this->campaign->shouldReceive('paginate')->once()->with($perPage)->andReturn($paginatorMock);
+        $this->campaignLog->shouldReceive('with')->once()->with('campaign')->andReturnSelf();
+        $this->campaignLog->shouldReceive('paginate')->once()->with($perPage)->andReturn($paginatorMock);
 
         $this->assertEquals($paginatorMock, $this->campaignRepository->paginate($perPage));
     }
@@ -78,7 +82,7 @@ class CampaignRepositoryTest extends TestCase
             ->getMock();
         $totalQueued = random_int(1, 10);
 
-        $this->campaign->shouldReceive('queued')->once()->andReturn($builder);
+        $this->campaignLog->shouldReceive('queued')->once()->andReturn($builder);
         $builder->expects($this->once())->method('count')->willReturn($totalQueued);
 
         $this->assertEquals($totalQueued, $this->campaignRepository->totalQueued());
@@ -96,7 +100,7 @@ class CampaignRepositoryTest extends TestCase
             ->getMock();
         $totalSent = random_int(1, 10);
 
-        $this->campaign->shouldReceive('sent')->once()->andReturn($builder);
+        $this->campaignLog->shouldReceive('sent')->once()->andReturn($builder);
         $builder->expects($this->once())->method('count')->willReturn($totalSent);
 
         $this->assertEquals($totalSent, $this->campaignRepository->totalSent());
@@ -114,7 +118,7 @@ class CampaignRepositoryTest extends TestCase
             ->getMock();
         $totalFailed = random_int(1, 10);
 
-        $this->campaign->shouldReceive('failed')->once()->andReturn($builder);
+        $this->campaignLog->shouldReceive('failed')->once()->andReturn($builder);
         $builder->expects($this->once())->method('count')->willReturn($totalFailed);
 
         $this->assertEquals($totalFailed, $this->campaignRepository->totalFailed());

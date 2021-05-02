@@ -49,7 +49,8 @@ export default {
         return {
             title: 'Campaigns',
             headers: [
-                { text: 'Name', value: 'name' },
+                { text: 'Campaign ID', value: 'id' },
+                { text: 'Campaign Name', value: 'name' },
                 { text: 'To', value: 'to' },
                 { text: 'Provider', value: 'provider' },
                 { text: 'Date', value: 'date' },
