@@ -21,7 +21,7 @@ class CampaignResourceTest extends TestCase
     use DatabaseMigrations, WithFaker;
 
     const STATUS_ALIASES = [
-        0 => 'Queue',
+        0 => 'Queued',
         1 => 'Sent',
         2 => 'Failed',
     ];

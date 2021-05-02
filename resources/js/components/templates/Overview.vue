@@ -28,15 +28,34 @@ export default {
         CardInfo
     },
 
+    props: {
+        /**
+         * @property {object} overview
+         */
+        overview: {
+            type: Object,
+            required: true
+        }
+    },
+
     data () {
         return {
-            title: 'Overview',
-            overviewData: [
-                { overline: 'SENT', headline: 23, color: 'teal', icon: 'mdi-check' },
-                { overline: 'IN PROGRESS', headline: 3, color: 'amber', icon: 'mdi-dots-horizontal' },
-                { overline: 'FAILED', headline: 5, color: 'deep-orange', icon: 'mdi-close' },
-            ]
+            title: 'Overview'
         };
+    },
+
+    computed: {
+        /**
+         *
+         * @returns {array}
+         */
+        overviewData() {
+            return [
+                { overline: 'SENT', headline: this.overview.sent, color: 'teal', icon: 'mdi-check' },
+                { overline: 'IN PROGRESS', headline: this.overview.queued, color: 'amber', icon: 'mdi-dots-horizontal' },
+                { overline: 'FAILED', headline: this.overview.failed, color: 'deep-orange', icon: 'mdi-close' },
+            ];
+        }
     }
 };
 </script>

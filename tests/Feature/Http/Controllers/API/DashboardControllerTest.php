@@ -40,11 +40,14 @@ class DashboardControllerTest extends TestCase
         factory(Campaign::class, $failedCount)->state('failed')->create();
         $dashboardData = [
             'overview' => ['queued' => $queuedCount, 'sent' => $sentCount, 'failed' => $failedCount],
-            'providerStatus' => ['SendGrid' => 'Closed', 'Mailjet' => 'Open'],
+            'providerStatus' => [
+                ['name' => 'SendGrid', 'status' => 'closed'],
+                ['name' => 'MailJet', 'status' => 'half-opened'],
+            ],
         ];
 
         $response = $this->get(route('get-dashboard'));
 
-        $response->assertOk()->assertExactJson($dashboardData);
+        $response->assertOk()->assertExactJson(['data' => $dashboardData]);
     }
 }

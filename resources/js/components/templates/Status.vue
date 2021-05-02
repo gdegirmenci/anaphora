@@ -12,11 +12,11 @@
           class="mx-auto rounded"
         >
           <info
-            v-for="(status, index) in statuses"
+            v-for="(provider, index) in providerStatus"
             :key="index"
-            :color="colors[status.circleStatus]"
+            :color="colors[provider.status]"
             :icon="'mdi-circle-slice-8'"
-            :overline="status.providerName"
+            :overline="provider.name"
             :has-headline="false"
           />
         </v-card>
@@ -35,14 +35,20 @@ export default {
         Info
     },
 
+    props: {
+        /**
+         * @property {array} providerStatus
+         */
+        providerStatus: {
+            type: Array,
+            required: true
+        }
+    },
+
     data () {
         return {
             title: 'Status',
-            colors: { 'open': 'red', 'half-open': 'amber', 'close': 'green' },
-            statuses: [
-                { providerName: 'SENDGRID', circleStatus: 'close' },
-                { providerName: 'MAILJET', circleStatus: 'close' },
-            ],
+            colors: { 'opened': 'red', 'half-opened': 'amber', 'closed': 'green' },
         };
     }
 };

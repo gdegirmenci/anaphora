@@ -71,7 +71,6 @@ export default {
 
     watch: {
         campaigns: function () {
-            console.log('changed');
             this.loading = false;
         }
     },

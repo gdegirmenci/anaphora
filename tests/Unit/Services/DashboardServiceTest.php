@@ -47,6 +47,7 @@ class DashboardServiceTest extends ServiceTestSuite
     /**
      * @test
      * @covers ::getDashboardData
+     * @covers ::__construct
      */
     function it_should_return_dashboard_data_with_overview_and_provider_status()
     {
@@ -85,9 +86,11 @@ class DashboardServiceTest extends ServiceTestSuite
      */
     function it_should_return_provider_status()
     {
-        $this->assertEquals(
-            ['SendGrid' => 'Closed', 'Mailjet' => 'Open'],
-            $this->invokeMethod($this->service, 'getProviderStatus')
-        );
+        $providerStatus = [
+            ['name' => 'SendGrid', 'status' => 'closed'],
+            ['name' => 'MailJet', 'status' => 'half-opened'],
+        ];
+
+        $this->assertEquals($providerStatus, $this->invokeMethod($this->service, 'getProviderStatus'));
     }
 }

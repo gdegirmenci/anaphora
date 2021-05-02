@@ -26,6 +26,7 @@ class CampaignControllerTest extends TestCase
     /**
      * @test
      * @covers ::index
+     * @covers ::__construct
      */
     function it_should_return_campaigns()
     {

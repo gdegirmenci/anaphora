@@ -47,6 +47,6 @@ class DashboardService
      */
     protected function getProviderStatus(): array
     {
-        return ['SendGrid' => 'Closed', 'Mailjet' => 'Open'];
+        return [['name' => 'SendGrid', 'status' => 'closed'], ['name' => 'MailJet', 'status' => 'half-opened']];
     }
 }

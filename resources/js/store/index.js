@@ -13,6 +13,7 @@ export default new Vuex.Store({
             links: {},
             meta: { last_page: 1, per_page: 10 }
         },
+        dashboard: { data: { overview: { queued: 0, sent: 0, failed: 0 }, providerStatus: [] } }
     },
 
     mutations: {
@@ -22,6 +23,14 @@ export default new Vuex.Store({
          */
         [Mutation.SET_CAMPAIGNS](state, campaigns) {
             state.campaigns = campaigns;
+        },
+
+        /**
+         * @param {object} state
+         * @param {object} dashboard
+         */
+        [Mutation.SET_DASHBOARD](state, dashboard) {
+            state.dashboard = dashboard;
         }
     },
 
@@ -35,6 +44,17 @@ export default new Vuex.Store({
             const { data } = await window.axios.get(`${ApiEnums.FETCH_CAMPAIGNS_URL}?page=${page}`);
 
             commit(Mutation.SET_CAMPAIGNS, data);
+        },
+
+        /**
+         * @name fetchDashboard
+         * @param {function} [commit]
+         * @param {number} page
+         */
+        async [Action.FETCH_DASHBOARD]({ commit }) {
+            const { data } = await window.axios.get(ApiEnums.FETCH_DASHBOARD_URL);
+
+            commit(Mutation.SET_DASHBOARD, data);
         }
     }
 });
