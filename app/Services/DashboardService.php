@@ -10,7 +10,7 @@ use App\Repositories\Campaign\CampaignRepositoryInterface;
  */
 class DashboardService
 {
-    /** @var CampaignRepositoryInterface  */
+    /** @var CampaignRepositoryInterface */
     private $campaignRepository;
 
     /**

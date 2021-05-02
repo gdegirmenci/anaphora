@@ -24,7 +24,7 @@ class CampaignResourceTest extends TestCase
         0 => 'Queue',
         1 => 'Sent',
         2 => 'Failed',
-     ];
+    ];
 
     /**
      * @test
