@@ -39,4 +39,28 @@ class CampaignRepository implements CampaignRepositoryInterface
     {
         $this->campaign->create($fields);
     }
+
+    /**
+     * @return int
+     */
+    public function totalQueued(): int
+    {
+        return $this->campaign->queued()->count();
+    }
+
+    /**
+     * @return int
+     */
+    public function totalSent(): int
+    {
+        return $this->campaign->sent()->count();
+    }
+
+    /**
+     * @return int
+     */
+    public function totalFailed(): int
+    {
+        return $this->campaign->failed()->count();
+    }
 }

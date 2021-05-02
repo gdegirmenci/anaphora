@@ -27,3 +27,21 @@ $factory->define(CampaignLog::class, function (Faker $faker) {
         'provider' => Arr::random(['sendgrid', 'mailjet']),
     ];
 });
+
+$factory->state(Campaign::class, 'queued', function () {
+    return [
+        'status' => 0,
+    ];
+});
+
+$factory->state(Campaign::class, 'sent', function () {
+    return [
+        'status' => 1,
+    ];
+});
+
+$factory->state(Campaign::class, 'failed', function () {
+    return [
+        'status' => 2,
+    ];
+});

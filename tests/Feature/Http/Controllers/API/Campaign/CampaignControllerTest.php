@@ -18,7 +18,7 @@ class CampaignControllerTest extends TestCase
 
     const DEFAULT_PER_PAGE = 10;
     const STATUS_ALIASES = [
-        0 => 'Queue',
+        0 => 'Queued',
         1 => 'Sent',
         2 => 'Failed',
     ];

@@ -21,4 +21,19 @@ interface CampaignRepositoryInterface
      * @return void
      */
     public function create(array $fields): void;
+
+    /**
+     * @return int
+     */
+    public function totalQueued(): int;
+
+    /**
+     * @return int
+     */
+    public function totalSent(): int;
+
+    /**
+     * @return int
+     */
+    public function totalFailed(): int;
 }

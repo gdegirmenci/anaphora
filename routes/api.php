@@ -18,3 +18,7 @@ Route::group(['namespace' => 'API\Campaign', 'prefix' => 'campaigns'], function 
     $route->get('/get', 'CampaignController@index')->name('get-campaigns');
     $route->get('/create', 'CampaignController@create')->name('create-campaign');
 });
+
+Route::group(['namespace' => 'API', 'prefix' => '/dashboard'], function (Router $route) {
+    $route->get('/get', 'DashboardController@index')->name('get-dashboard');
+});

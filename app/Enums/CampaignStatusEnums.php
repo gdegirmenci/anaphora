@@ -8,11 +8,11 @@ namespace App\Enums;
  */
 final class CampaignStatusEnums
 {
-    const QUEUE = 0;
+    const QUEUED = 0;
     const SENT = 1;
     const FAILED = 2;
     const STATUS_ALIASES = [
-        self::QUEUE => 'Queue',
+        self::QUEUED => 'Queued',
         self::SENT => 'Sent',
         self::FAILED => 'Failed',
     ];

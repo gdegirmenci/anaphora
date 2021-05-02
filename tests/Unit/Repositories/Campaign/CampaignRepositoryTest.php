@@ -3,6 +3,7 @@
 namespace Tests\Unit\Repositories\Campaign;
 
 use App\Repositories\Campaign\CampaignRepositoryInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Mockery;
 use Mockery\Mock;
 use Tests\TestCase;
@@ -63,5 +64,59 @@ class CampaignRepositoryTest extends TestCase
         $this->campaign->shouldReceive('create')->once()->with($fields);
 
         $this->campaignRepository->create($fields);
+    }
+
+    /**
+     * @test
+     * @covers ::totalQueued
+     */
+    function it_should_return_total_queued()
+    {
+        $builder = $this->getMockBuilder(Builder::class)
+            ->disableOriginalConstructor()
+            ->addMethods(['count'])
+            ->getMock();
+        $totalQueued = random_int(1, 10);
+
+        $this->campaign->shouldReceive('queued')->once()->andReturn($builder);
+        $builder->expects($this->once())->method('count')->willReturn($totalQueued);
+
+        $this->assertEquals($totalQueued, $this->campaignRepository->totalQueued());
+    }
+
+    /**
+     * @test
+     * @covers ::totalSent
+     */
+    function it_should_return_total_sent()
+    {
+        $builder = $this->getMockBuilder(Builder::class)
+            ->disableOriginalConstructor()
+            ->addMethods(['count'])
+            ->getMock();
+        $totalSent = random_int(1, 10);
+
+        $this->campaign->shouldReceive('sent')->once()->andReturn($builder);
+        $builder->expects($this->once())->method('count')->willReturn($totalSent);
+
+        $this->assertEquals($totalSent, $this->campaignRepository->totalSent());
+    }
+
+    /**
+     * @test
+     * @covers ::totalFailed
+     */
+    function it_should_return_total_failed()
+    {
+        $builder = $this->getMockBuilder(Builder::class)
+            ->disableOriginalConstructor()
+            ->addMethods(['count'])
+            ->getMock();
+        $totalFailed = random_int(1, 10);
+
+        $this->campaign->shouldReceive('failed')->once()->andReturn($builder);
+        $builder->expects($this->once())->method('count')->willReturn($totalFailed);
+
+        $this->assertEquals($totalFailed, $this->campaignRepository->totalFailed());
     }
 }
