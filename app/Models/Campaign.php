@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int id
  * @property string name
  * @property string template
+ * @property array to
  * @property string type
  */
 class Campaign extends Model
@@ -18,6 +19,8 @@ class Campaign extends Model
     protected $fillable = [
         'name',
         'template',
+        'to',
         'type',
     ];
+    protected $casts = ['to' => 'array'];
 }

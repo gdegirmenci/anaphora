@@ -13,7 +13,6 @@ use Illuminate\Support\Carbon;
  * @package App\Models
  * @property int id
  * @property int campaign_id
- * @property string to
  * @property string provider
  * @property string status
  * @property Carbon created_at
@@ -27,7 +26,6 @@ class CampaignLog extends Model
     protected $table = 'campaign_logs';
     protected $fillable = [
         'campaign_id',
-        'to',
         'provider',
         'status',
     ];

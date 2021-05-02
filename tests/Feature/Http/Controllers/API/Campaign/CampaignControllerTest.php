@@ -38,7 +38,7 @@ class CampaignControllerTest extends TestCase
                     'id' => $campaignLog->campaign->id,
                     'name' => $campaignLog->campaign->name,
                     'status' => self::STATUS_ALIASES[$campaignLog->status],
-                    'to' => $campaignLog->to,
+                    'to' => $campaignLog->campaign->to,
                     'provider' => Str::ucfirst($campaignLog->provider),
                     'date' => $campaignLog->created_at->toRfc850String(),
                 ];

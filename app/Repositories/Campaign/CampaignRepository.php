@@ -32,16 +32,27 @@ class CampaignRepository implements CampaignRepositoryInterface
      */
     public function paginate(int $perPage): LengthAwarePaginator
     {
-        return $this->campaignLog->with('campaign')->paginate($perPage);
+        return $this->campaignLog->with('campaign')->orderBy('created_at', 'desc')->paginate($perPage);
     }
 
     /**
      * @param array $fields
+     * @return Campaign
+     */
+    public function create(array $fields): Campaign
+    {
+        return $this->campaign->create($fields);
+    }
+
+    /**
+     * @param int $campaignId
+     * @param string $provider
+     * @param int $status
      * @return void
      */
-    public function create(array $fields): void
+    public function updateCampaignStatus(int $campaignId, string $provider, int $status): void
     {
-        $this->campaign->create($fields);
+        $this->campaignLog->updateOrCreate(['campaign_id' => $campaignId, 'provider' => $provider], compact('status'));
     }
 
     /**

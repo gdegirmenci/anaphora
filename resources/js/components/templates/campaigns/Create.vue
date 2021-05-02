@@ -2,6 +2,9 @@
   <v-dialog
     v-model="dialog"
     scrollable
+    fullscreen
+    hide-overlay
+    transition="dialog-bottom-transition"
     max-width="600px"
   >
     <template #activator="{ on, attrs }">
@@ -36,9 +39,9 @@
           <v-container>
             <v-row>
               <v-col
-                cols="12"
-                sm="12"
-                md="12"
+                cols="6"
+                sm="6"
+                md="6"
               >
                 <v-text-field
                   v-model="campaign.name"
@@ -48,9 +51,9 @@
                 />
               </v-col>
               <v-col
-                cols="12"
-                sm="12"
-                md="12"
+                cols="6"
+                sm="6"
+                md="6"
               >
                 <v-text-field
                   v-model="campaign.subject"
@@ -59,6 +62,8 @@
                   required
                 />
               </v-col>
+            </v-row>
+            <v-row>
               <v-col
                 cols="12"
                 sm="6"
@@ -83,6 +88,8 @@
                   required
                 />
               </v-col>
+            </v-row>
+            <v-row>
               <v-col
                 cols="12"
                 sm="6"
@@ -107,6 +114,29 @@
                   required
                 />
               </v-col>
+            </v-row>
+            <v-row
+              v-for="(to, index) in campaign.to"
+              :key="index"
+            >
+              <v-col
+                cols="12"
+                sm="12"
+                md="12"
+              >
+                <v-text-field
+                  v-model="to.email"
+                  :prepend-inner-icon="appendIcon()"
+                  :append-icon="appendOuterIcon(index)"
+                  :rules="rules.email"
+                  label="Recipient E-mail"
+                  required
+                  @click:append="addRecipient"
+                  @click:prepend-inner="removeRecipient(index)"
+                />
+              </v-col>
+            </v-row>
+            <v-row>
               <v-col
                 cols="12"
                 sm="12"
@@ -114,6 +144,7 @@
               >
                 <v-textarea
                   v-model="campaign.template"
+                  auto-grow
                   :rules="rules.text"
                   clearable
                   clear-icon="mdi-close-circle"
@@ -171,7 +202,7 @@ export default {
                 subject: '',
                 from: { name: '', email: '' },
                 reply: { name: '', email: '' },
-                to: [{ name: '', email: '' }],
+                to: [{ email: '' }],
                 template: ''
             }
         };
@@ -184,6 +215,35 @@ export default {
 
                 await window.axios.post(ApiEnums.CREATE_CAMPAIGN_URL, {...this.campaign});
             }
+        },
+
+        /**
+         * @returns {void}
+         */
+        addRecipient() {
+            this.campaign.to.push({ email: '' });
+        },
+
+        /**
+         * @returns {void}
+         */
+        removeRecipient(index) {
+            this.campaign.to.splice(index, 1);
+        },
+
+        /**
+         * @returns {string}
+         */
+        appendIcon() {
+            return this.campaign.to.length !== 1 ? 'mdi-minus' : '';
+        },
+
+        /**
+         * @param {number} index
+         * @returns {string}
+         */
+        appendOuterIcon(index) {
+            return this.campaign.to.length === index + 1 ? 'mdi-plus' : '';
         }
     }
 };

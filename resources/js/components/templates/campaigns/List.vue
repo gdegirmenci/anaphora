@@ -11,6 +11,7 @@
           outlined
           :headers="headers"
           :items="campaigns.data"
+          :item-key="title"
           :items-per-page="campaigns.meta.per_page"
           :server-items-length="totalCampaigns"
           :loading="loading"
@@ -51,7 +52,6 @@ export default {
             headers: [
                 { text: 'Campaign ID', value: 'id' },
                 { text: 'Campaign Name', value: 'name' },
-                { text: 'To', value: 'to' },
                 { text: 'Provider', value: 'provider' },
                 { text: 'Date', value: 'date' },
                 { text: 'Status', value: 'status' },

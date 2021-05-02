@@ -13,14 +13,14 @@ $factory->define(Campaign::class, function (Faker $faker) {
     return [
         'name' => $faker->catchPhrase,
         'template' => $faker->text,
+        'to' => ['email' => $faker->email, 'name' => $this->faker->name],
         'type' => 'text',
     ];
 });
 
-$factory->define(CampaignLog::class, function (Faker $faker) {
+$factory->define(CampaignLog::class, function () {
     return [
         'campaign_id' => (factory(Campaign::class)->create())->id,
-        'to' => $faker->email,
         'provider' => Arr::random(['sendgrid', 'mailjet']),
         'status' => random_int(0, 2),
     ];

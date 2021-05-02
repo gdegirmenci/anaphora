@@ -13,7 +13,6 @@ use Illuminate\Support\Str;
  * Class CampaignResource
  * @package App\Http\Resources
  * @property int id
- * @property string to
  * @property string provider
  * @property int status
  * @property Carbon created_at
@@ -31,7 +30,7 @@ class CampaignResource extends JsonResource
             'id' => $this->campaign->id,
             'name' => $this->campaign->name,
             'status' => CampaignStatusEnums::STATUS_ALIASES[$this->status],
-            'to' => $this->to,
+            'to' => $this->campaign->to,
             'provider' => Str::ucfirst($this->provider),
             'date' => $this->created_at->toRfc850String(),
         ];

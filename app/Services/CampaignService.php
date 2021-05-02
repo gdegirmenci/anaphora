@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Enums\CampaignStatusEnums;
+use App\Enums\ProviderEnums;
+use App\Events\Campaign\CampaignStatusUpdated;
 use App\Repositories\Campaign\CampaignRepositoryInterface;
 use App\ValueObjects\Payloads\CampaignPayload;
 
@@ -29,7 +32,8 @@ class CampaignService
      */
     public function create(CampaignPayload $campaignPayload): array
     {
-        $this->campaignRepository->create($campaignPayload->toSave());
+        $campaign = $this->campaignRepository->create($campaignPayload->toSave());
+        event(new CampaignStatusUpdated($campaign->id, ProviderEnums::SENDGRID, CampaignStatusEnums::QUEUED));
 
         return ['success' => true];
     }

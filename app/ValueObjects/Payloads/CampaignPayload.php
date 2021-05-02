@@ -2,7 +2,6 @@
 
 namespace App\ValueObjects\Payloads;
 
-use App\Enums\CampaignStatusEnums;
 use Illuminate\Support\Arr;
 
 /**
@@ -51,13 +50,21 @@ final class CampaignPayload
     /**
      * @return array
      */
+    public function getTo(): array
+    {
+        return Arr::get($this->payload, 'to');
+    }
+
+    /**
+     * @return array
+     */
     public function toSave(): array
     {
         return [
             'name' => $this->getName(),
             'template' => $this->getTemplate(),
             'type' => $this->getType(),
-            'status' => CampaignStatusEnums::QUEUED,
+            'to' => $this->getTo(),
         ];
     }
 }

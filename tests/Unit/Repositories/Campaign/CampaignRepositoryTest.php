@@ -52,6 +52,7 @@ class CampaignRepositoryTest extends TestCase
         $paginatorMock = $this->createMock(LengthAwarePaginator::class);
 
         $this->campaignLog->shouldReceive('with')->once()->with('campaign')->andReturnSelf();
+        $this->campaignLog->shouldReceive('orderBy')->once()->with('created_at', 'desc')->andReturnSelf();
         $this->campaignLog->shouldReceive('paginate')->once()->with($perPage)->andReturn($paginatorMock);
 
         $this->assertEquals($paginatorMock, $this->campaignRepository->paginate($perPage));
@@ -65,9 +66,27 @@ class CampaignRepositoryTest extends TestCase
     {
         $fields = [$this->faker->name => $this->faker->name];
 
-        $this->campaign->shouldReceive('create')->once()->with($fields);
+        $this->campaign->shouldReceive('create')->once()->with($fields)->andReturnSelf();
 
-        $this->campaignRepository->create($fields);
+        $this->assertEquals($this->campaign, $this->campaignRepository->create($fields));
+    }
+
+    /**
+     * @test
+     * @covers ::updateCampaignStatus
+     */
+    function it_should_update_campaign_status()
+    {
+        $campaignId = random_int(1, 10);
+        $provider = $this->faker->word;
+        $status = random_int(0, 2);
+
+        $this->campaignLog
+            ->shouldReceive('updateOrCreate')
+            ->once()
+            ->with(['campaign_id' => $campaignId, 'provider' => $provider], compact('status'));
+
+        $this->campaignRepository->updateCampaignStatus($campaignId, $provider, $status);
     }
 
     /**

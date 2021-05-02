@@ -43,7 +43,7 @@ class CampaignResourceTest extends TestCase
                 'id' => $campaign->id,
                 'name' => $campaign->name,
                 'status' => self::STATUS_ALIASES[$campaignLog->status],
-                'to' => $campaignLog->to,
+                'to' => $campaign->to,
                 'provider' => Str::ucfirst($campaignLog->provider),
                 'date' => $campaignLog->created_at->toRfc850String(),
             ],

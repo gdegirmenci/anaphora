@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Campaign;
 
+use App\Models\Campaign;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
@@ -18,9 +19,17 @@ interface CampaignRepositoryInterface
 
     /**
      * @param array $fields
+     * @return Campaign
+     */
+    public function create(array $fields): Campaign;
+
+    /**
+     * @param int $campaignId
+     * @param string $provider
+     * @param int $status
      * @return void
      */
-    public function create(array $fields): void;
+    public function updateCampaignStatus(int $campaignId, string $provider, int $status): void;
 
     /**
      * @return int
