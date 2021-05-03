@@ -44,8 +44,8 @@ abstract class TestCase extends BaseTestCase
     /**
      * @param mixed $object
      * @param string $property
-     * @return mixed
      * @throws ReflectionException
+     * @return mixed
      */
     public function getPrivateProperty($object, string $property)
     {
@@ -59,8 +59,8 @@ abstract class TestCase extends BaseTestCase
     /**
      * @param mixed $object
      * @param mixed $property
-     * @throws ReflectionException
      * @param mixed $value
+     * @throws ReflectionException
      * @return void
      */
     public function setPrivateProperty($object, $property, $value): void

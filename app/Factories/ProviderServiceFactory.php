@@ -18,8 +18,8 @@ class ProviderServiceFactory
     /**
      * @param CampaignEntity $campaignEntity
      * @param string $provider
-     * @return ProviderServiceInterface
      * @throws Exception
+     * @return ProviderServiceInterface
      */
     public function make(CampaignEntity $campaignEntity, string $provider): ProviderServiceInterface
     {
