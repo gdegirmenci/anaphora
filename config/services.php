@@ -30,4 +30,14 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'sendgrid' => [
+        'endpoint' => env('SEND_GRID_API_URL', 'https://api.sendgrid.com/v3/mail/send'),
+        'secret' => env('SEND_GRID_API_SECRET'),
+    ],
+
+    'mailjet' => [
+        'endpoint' => env('MAIL_JET_API_URL', 'https://api.mailjet.com/v3.1/send'),
+        'secret' => env('MAIL_JET_API_SECRET'),
+    ],
+
 ];

@@ -2,14 +2,14 @@
 
 namespace Tests\Unit\Services;
 
-use App\Events\Campaign\CampaignStatusUpdated;
+use App\Entities\CampaignEntity;
+use App\Jobs\Campaign\CampaignSenderDispatcher;
 use App\Models\Campaign;
 use App\Repositories\Campaign\CampaignRepository;
 use App\Repositories\Campaign\CampaignRepositoryInterface;
 use App\Services\CampaignService;
-use App\ValueObjects\Payloads\CampaignPayload;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\Suites\ServiceTestSuite;
 
@@ -44,10 +44,10 @@ class CampaignServiceTest extends ServiceTestSuite
      * @covers ::create
      * @covers ::__construct
      */
-    function it_should_return_dashboard_data_with_overview_and_provider_status()
+    function it_should_return_success_with_dispatching_campaign_sender_dispatcher()
     {
-        Event::fake();
-        $campaignPayload = new CampaignPayload([
+        Queue::fake();
+        $campaignEntity = new CampaignEntity([
             'name' => $this->faker->word,
             'template' => $this->faker->word,
             'type' => $this->faker->word,
@@ -59,16 +59,15 @@ class CampaignServiceTest extends ServiceTestSuite
         $this->campaignRepository
             ->expects($this->once())
             ->method('create')
-            ->with($campaignPayload->toSave())
+            ->with($campaignEntity->toSave())
             ->willReturn($campaign);
 
-        $this->assertEquals(['success' => true], $this->service->create($campaignPayload));
-        Event::assertDispatched(
-            CampaignStatusUpdated::class,
-            function (CampaignStatusUpdated $event) use ($campaign) {
-                $this->assertProperty($event, 'campaignId', $campaign->id);
-                $this->assertProperty($event, 'provider', self::DEFAULT_PROVIDER);
-                $this->assertProperty($event, 'status', self::QUEUED);
+        $this->assertEquals(['success' => true], $this->service->create($campaignEntity));
+        Queue::assertPushed(
+            CampaignSenderDispatcher::class,
+            function (CampaignSenderDispatcher $campaignSenderDispatcher) use ($campaignEntity) {
+                $this->assertProperty($campaignSenderDispatcher, 'campaignEntity', $campaignEntity);
+                $this->assertProperty($campaignSenderDispatcher, 'provider', config('mail.primary_provider'));
 
                 return true;
             }

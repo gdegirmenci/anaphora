@@ -8,6 +8,6 @@ namespace App\Enums;
  */
 final class ProviderEnums
 {
-    const SENDGRID = 'sendgrid';
-    const MAILJET = 'mailjet';
+    const SEND_GRID = 'sendgrid';
+    const MAIL_JET = 'mailjet';
 }

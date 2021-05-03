@@ -107,4 +107,6 @@ return [
         ],
     ],
 
+    'primary_provider' => env('PRIMARY_MAIL_PROVIDER', 'sendgrid'),
+
 ];

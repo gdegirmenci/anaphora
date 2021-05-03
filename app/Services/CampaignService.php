@@ -2,11 +2,10 @@
 
 namespace App\Services;
 
-use App\Enums\CampaignStatusEnums;
-use App\Enums\ProviderEnums;
-use App\Events\Campaign\CampaignStatusUpdated;
+use App\Entities\CampaignEntity;
+use App\Jobs\Campaign\CampaignSenderDispatcher;
 use App\Repositories\Campaign\CampaignRepositoryInterface;
-use App\ValueObjects\Payloads\CampaignPayload;
+use Illuminate\Support\Facades\Queue;
 
 /**
  * Class CampaignService
@@ -18,7 +17,7 @@ class CampaignService
     private $campaignRepository;
 
     /**
-     * DashboardService constructor.
+     * CampaignService constructor.
      * @param CampaignRepositoryInterface $campaignRepository
      */
     public function __construct(CampaignRepositoryInterface $campaignRepository)
@@ -27,13 +26,14 @@ class CampaignService
     }
 
     /**
-     * @param CampaignPayload $campaignPayload
+     * @param CampaignEntity $campaignEntity
      * @return array
      */
-    public function create(CampaignPayload $campaignPayload): array
+    public function create(CampaignEntity $campaignEntity): array
     {
-        $campaign = $this->campaignRepository->create($campaignPayload->toSave());
-        event(new CampaignStatusUpdated($campaign->id, ProviderEnums::SENDGRID, CampaignStatusEnums::QUEUED));
+        $campaign = $this->campaignRepository->create($campaignEntity->toSave());
+        $campaignEntity->setCampaignId($campaign->id);
+        Queue::push(new CampaignSenderDispatcher($campaignEntity, config('mail.primary_provider')));
 
         return ['success' => true];
     }

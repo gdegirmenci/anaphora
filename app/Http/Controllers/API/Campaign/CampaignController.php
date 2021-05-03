@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\API\Campaign;
 
+use App\Entities\CampaignEntity;
 use App\Http\Requests\API\Campaign\CreateRequest;
 use App\Http\Requests\API\Campaign\PaginateRequest;
 use App\Http\Resources\CampaignResource;
 use App\Repositories\Campaign\CampaignRepositoryInterface;
 use App\Services\CampaignService;
-use App\ValueObjects\Payloads\CampaignPayload;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -37,8 +37,8 @@ class CampaignController extends Controller
      */
     public function create(CreateRequest $request, CampaignService $campaignService): JsonResponse
     {
-        $campaignPayload = new CampaignPayload($request->toArray());
+        $campaignEntity = new CampaignEntity($request->toArray());
 
-        return new JsonResponse(['data' => $campaignService->create($campaignPayload)]);
+        return new JsonResponse(['data' => $campaignService->create($campaignEntity)]);
     }
 }

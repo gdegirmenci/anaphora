@@ -25,11 +25,21 @@
     </template>
     <v-card>
       <v-toolbar
+        max-height="64"
         flat
         color="light-blue darken-4"
         dark
       >
-        {{ createCampaignText }}
+        <v-btn
+          icon
+          dark
+          @click="dialog = false"
+        >
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+        <v-toolbar-title class="text-subtitle-2 ml-2">
+          {{ createCampaignText }} CAMPAIGN
+        </v-toolbar-title>
       </v-toolbar>
       <v-card-text>
         <v-form
@@ -37,7 +47,7 @@
           lazy-validation
         >
           <v-container>
-            <v-row>
+            <v-row class="mt-5">
               <v-col
                 cols="6"
                 sm="6"
@@ -45,6 +55,7 @@
               >
                 <v-text-field
                   v-model="campaign.name"
+                  outlined
                   :rules="rules.text"
                   label="Campaign Name"
                   required
@@ -57,6 +68,7 @@
               >
                 <v-text-field
                   v-model="campaign.subject"
+                  outlined
                   :rules="rules.text"
                   label="Subject"
                   required
@@ -71,6 +83,7 @@
               >
                 <v-text-field
                   v-model="campaign.from.name"
+                  outlined
                   :rules="rules.text"
                   label="From Name"
                   required
@@ -83,6 +96,7 @@
               >
                 <v-text-field
                   v-model="campaign.from.email"
+                  outlined
                   :rules="rules.email"
                   label="From E-mail"
                   required
@@ -97,6 +111,7 @@
               >
                 <v-text-field
                   v-model="campaign.reply.name"
+                  outlined
                   :rules="rules.text"
                   label="Reply Name"
                   required
@@ -109,6 +124,7 @@
               >
                 <v-text-field
                   v-model="campaign.reply.email"
+                  outlined
                   :rules="rules.email"
                   label="Reply E-mail"
                   required
@@ -120,19 +136,33 @@
               :key="index"
             >
               <v-col
-                cols="12"
-                sm="12"
-                md="12"
+                cols="6"
+                sm="6"
+                md="6"
+              >
+                <v-text-field
+                  v-model="to.name"
+                  outlined
+                  :rules="rules.text"
+                  label="Recipient Name"
+                  required
+                />
+              </v-col>
+              <v-col
+                cols="6"
+                sm="6"
+                md="6"
               >
                 <v-text-field
                   v-model="to.email"
-                  :prepend-inner-icon="appendIcon()"
-                  :append-icon="appendOuterIcon(index)"
+                  outlined
+                  :append-icon="appendIcon()"
+                  :append-outer-icon="appendOuterIcon(index)"
                   :rules="rules.email"
                   label="Recipient E-mail"
                   required
-                  @click:append="addRecipient"
-                  @click:prepend-inner="removeRecipient(index)"
+                  @click:append-outer="addRecipient"
+                  @click:append="removeRecipient(index)"
                 />
               </v-col>
             </v-row>
@@ -144,6 +174,7 @@
               >
                 <v-textarea
                   v-model="campaign.template"
+                  outlined
                   auto-grow
                   :rules="rules.text"
                   clearable
@@ -157,23 +188,38 @@
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-spacer />
-        <v-btn
-          text
-          large
-          color="primary"
-          @click="dialog = false"
-        >
-          Close
-        </v-btn>
-        <v-btn
-          depressed
-          large
-          color="primary"
-          @click="createCampaign"
-        >
-          Create
-        </v-btn>
+        <v-container>
+          <v-row>
+            <v-col
+              cols="12"
+              sm="6"
+            >
+              <v-btn
+                text
+                block
+                large
+                color="primary"
+                @click="dialog = false"
+              >
+                Close
+              </v-btn>
+            </v-col>
+            <v-col
+              cols="12"
+              sm="6"
+            >
+              <v-btn
+                depressed
+                block
+                large
+                color="primary"
+                @click="createCampaign"
+              >
+                Create
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -202,7 +248,7 @@ export default {
                 subject: '',
                 from: { name: '', email: '' },
                 reply: { name: '', email: '' },
-                to: [{ email: '' }],
+                to: [{ email: '', name: '' }],
                 template: ''
             }
         };
@@ -221,7 +267,7 @@ export default {
          * @returns {void}
          */
         addRecipient() {
-            this.campaign.to.push({ email: '' });
+            this.campaign.to.push({ email: '', name: '' });
         },
 
         /**

@@ -12,7 +12,7 @@ use Tests\Suites\ModelTestSuite;
 /**
  * Class CampaignTest
  * @package Tests\Unit\Models
- * @coversDefaultClass \App\Models\Campaign
+ * @coversDefaultClass \App\Models\CampaignLog
  */
 class CampaignLogTest extends ModelTestSuite
 {
