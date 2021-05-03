@@ -33,8 +33,8 @@ class CircuitBreakerService
     /**
      * @param RequestInterface $request
      * @param Tracker $tracker
-     * @return bool
      * @throws GuzzleException
+     * @return bool
      */
     public function makeRequest(RequestInterface $request, Tracker $tracker): bool
     {

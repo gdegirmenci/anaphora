@@ -14,7 +14,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
  */
 class UpdateCircuitBreakerStatus implements ShouldQueue
 {
-    /** @var CircuitBreakerService  */
+    /** @var CircuitBreakerService */
     private $circuitBreakerService;
     /** @var CampaignRepositoryInterface */
     private $campaignRepository;
