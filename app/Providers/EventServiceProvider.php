@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Events\Campaign\CampaignStatusUpdated;
+use App\Events\CircuitBreaker\CircuitBreakerStatusUpdated;
 use App\Listeners\Campaign\UpdateCampaignStatus;
+use App\Listeners\CircuitBreaker\UpdateCircuitBreakerStatus;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -25,6 +27,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         CampaignStatusUpdated::class => [
             UpdateCampaignStatus::class,
+        ],
+        CircuitBreakerStatusUpdated::class => [
+            UpdateCircuitBreakerStatus::class,
         ],
     ];
 
