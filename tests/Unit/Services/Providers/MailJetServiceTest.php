@@ -2,6 +2,8 @@
 
 namespace Tests\Unit\Services\Providers;
 
+use App\Repositories\Campaign\CampaignRepository;
+use App\Repositories\Campaign\CampaignRepositoryInterface;
 use App\Services\Providers\MailJetService;
 use App\Services\Providers\ProviderServiceInterface;
 use App\ValueObjects\Email\Email;
@@ -25,6 +27,8 @@ class MailJetServiceTest extends ServiceTestSuite
     private $service;
     /** @var Email */
     private $email;
+    /** @var CampaignRepositoryInterface|MockObject */
+    private $campaignRepository;
 
     /**
      * @return void
@@ -39,7 +43,8 @@ class MailJetServiceTest extends ServiceTestSuite
             $this->faker->sentence,
             'text'
         );
-        $this->service = new MailJetService($this->email);
+        $this->campaignRepository = $this->createMock(CampaignRepository::class);
+        $this->service = new MailJetService($this->campaignRepository, $this->email);
     }
 
     /**
@@ -49,7 +54,7 @@ class MailJetServiceTest extends ServiceTestSuite
     public function setServiceMock(array $methods): void
     {
         $this->service = $this->getMockBuilder(MailJetService::class)
-            ->setConstructorArgs([$this->email])
+            ->setConstructorArgs([$this->campaignRepository, $this->email])
             ->onlyMethods($methods)
             ->getMock();
     }
@@ -86,7 +91,7 @@ class MailJetServiceTest extends ServiceTestSuite
     {
         $this->setServiceMock(['getRecipients']);
         $recipients = [['Name' => $this->faker->name, 'Email' => $this->faker->email]];
-        $body = [
+        $body = collect([
             'Messages' => [
                 [
                     'From' => [
@@ -99,10 +104,11 @@ class MailJetServiceTest extends ServiceTestSuite
                     ],
                     'To' => $recipients,
                     'Subject' => $this->email->getSubject(),
-                    'TextPart' => $this->email->getTemplate(),
+                    'TextPart' => $this->email->getTemplate()->getContent(),
+                    'HTMLPart' => '',
                 ],
             ],
-        ];
+        ]);
 
         $this->service->expects($this->once())->method('getRecipients')->willReturn($recipients);
 

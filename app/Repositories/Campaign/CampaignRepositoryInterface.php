@@ -3,6 +3,7 @@
 namespace App\Repositories\Campaign;
 
 use App\Models\Campaign;
+use App\Models\CampaignLog;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
@@ -45,4 +46,11 @@ interface CampaignRepositoryInterface
      * @return int
      */
     public function totalFailed(): int;
+
+    /**
+     * @param int $campaignId
+     * @param string $provider
+     * @return CampaignLog|null
+     */
+    public function getFailedLogByProvider(int $campaignId, string $provider): ?CampaignLog;
 }

@@ -50,22 +50,34 @@ class CampaignSender implements ShouldQueue
     ): void {
         $providerService = $providerServiceFactory->make($this->campaignEntity, $this->provider);
         $tracker = new Tracker(new Keys($this->provider), $this->campaignEntity->getCampaignId());
+        $availableProvider = $providerService->switchProvider($this->campaignEntity->getCampaignId());
 
         if ($tracker->isOpened()) {
-            Queue::push(new CampaignSenderDispatcher($this->campaignEntity, $providerService->switchProvider()));
+            event(
+                new CampaignStatusUpdated(
+                    $this->campaignEntity->getCampaignId(),
+                    $this->provider,
+                    CampaignStatusEnums::FAILED
+                )
+            );
+
+            if (!$availableProvider) {
+                return;
+            }
+
+            Queue::push(new CampaignSenderDispatcher($this->campaignEntity, $availableProvider));
 
             return;
         }
 
         $status = $circuitBreakerService->makeRequest($providerService->getRequest(), $tracker);
 
-        if (!$status) {
-            Queue::push(new CampaignSenderDispatcher($this->campaignEntity, $providerService->switchProvider()));
+        if ($status) {
             event(
                 new CampaignStatusUpdated(
                     $this->campaignEntity->getCampaignId(),
                     $this->provider,
-                    CampaignStatusEnums::FAILED
+                    CampaignStatusEnums::SENT
                 )
             );
 
@@ -76,9 +88,15 @@ class CampaignSender implements ShouldQueue
             new CampaignStatusUpdated(
                 $this->campaignEntity->getCampaignId(),
                 $this->provider,
-                CampaignStatusEnums::SENT
+                CampaignStatusEnums::FAILED
             )
         );
+
+        if (!$availableProvider) {
+            return;
+        }
+
+        Queue::push(new CampaignSenderDispatcher($this->campaignEntity, $availableProvider));
     }
 
     /**

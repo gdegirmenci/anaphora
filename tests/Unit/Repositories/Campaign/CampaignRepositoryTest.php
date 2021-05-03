@@ -22,6 +22,8 @@ class CampaignRepositoryTest extends TestCase
 {
     use WithFaker;
 
+    const FAILED = 2;
+
     /** @var Campaign|Mock */
     private $campaign;
     /** @var CampaignLog|Mock */
@@ -141,5 +143,46 @@ class CampaignRepositoryTest extends TestCase
         $builder->expects($this->once())->method('count')->willReturn($totalFailed);
 
         $this->assertEquals($totalFailed, $this->campaignRepository->totalFailed());
+    }
+
+    /**
+     * @test
+     * @covers ::getFailedLogByProvider
+     */
+    function it_should_return_failed_log_by_provider_when_it_exists()
+    {
+        $campaignId = random_int(1, 10);
+        $provider = $this->faker->word;
+
+        $this->campaignLog
+            ->shouldReceive('where')
+            ->once()
+            ->with(['campaign_id' => $campaignId, 'provider' => $provider, 'status' => self::FAILED])
+            ->andReturnSelf();
+        $this->campaignLog->shouldReceive('first')->once()->andReturnSelf();
+
+        $this->assertEquals(
+            $this->campaignLog,
+            $this->campaignRepository->getFailedLogByProvider($campaignId, $provider)
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::getFailedLogByProvider
+     */
+    function it_should_return_null_when_failed_log_by_provider_not_exist()
+    {
+        $campaignId = random_int(1, 10);
+        $provider = $this->faker->word;
+
+        $this->campaignLog
+            ->shouldReceive('where')
+            ->once()
+            ->with(['campaign_id' => $campaignId, 'provider' => $provider, 'status' => self::FAILED])
+            ->andReturnSelf();
+        $this->campaignLog->shouldReceive('first')->once()->andReturnNull();
+
+        $this->assertNull($this->campaignRepository->getFailedLogByProvider($campaignId, $provider));
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Campaign;
 
+use App\Enums\CampaignStatusEnums;
 use App\Models\Campaign;
 use App\Models\CampaignLog;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -77,5 +78,17 @@ class CampaignRepository implements CampaignRepositoryInterface
     public function totalFailed(): int
     {
         return $this->campaignLog->failed()->count();
+    }
+
+    /**
+     * @param int $campaignId
+     * @param string $provider
+     * @return CampaignLog|null
+     */
+    public function getFailedLogByProvider(int $campaignId, string $provider): ?CampaignLog
+    {
+        return $this->campaignLog
+            ->where(['campaign_id' => $campaignId, 'provider' => $provider, 'status' => CampaignStatusEnums::FAILED])
+            ->first();
     }
 }

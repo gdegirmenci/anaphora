@@ -2,6 +2,7 @@
 
 namespace App\Services\Providers;
 
+use Illuminate\Support\Collection;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -26,9 +27,9 @@ interface ProviderServiceInterface
     public function getHeaders(): array;
 
     /**
-     * @return array
+     * @return Collection
      */
-    public function getBody(): array;
+    public function getBody(): Collection;
 
     /**
      * @return string
@@ -46,7 +47,8 @@ interface ProviderServiceInterface
     public function getRecipients(): array;
 
     /**
-     * @return string
+     * @param int $campaignId
+     * @return string|null
      */
-    public function switchProvider(): string;
+    public function switchProvider(int $campaignId): ?string;
 }

@@ -17,6 +17,8 @@ class CampaignEntityTest extends TestCase
 {
     use WithFaker;
 
+    const DEFAULT_TYPE = 'text';
+
     /**
      * @return array
      */
@@ -25,7 +27,7 @@ class CampaignEntityTest extends TestCase
         return [
             'name' => $this->faker->word,
             'template' => $this->faker->sentence,
-            'type' => $this->faker->word,
+            'type' => self::DEFAULT_TYPE,
             'from' => ['email' => $this->faker->word],
             'reply' => ['email' => $this->faker->word],
             'to' => [['email' => $this->faker->word]],
@@ -103,7 +105,7 @@ class CampaignEntityTest extends TestCase
         $payload = $this->getPayload();
         $campaignEntity = new CampaignEntity($payload);
 
-        $this->assertEquals(Arr::get($payload, 'type'), $campaignEntity->getType());
+        $this->assertEquals(self::DEFAULT_TYPE, $campaignEntity->getType());
     }
 
     /**
@@ -158,8 +160,8 @@ class CampaignEntityTest extends TestCase
         $email = new Email(
             $campaignEntity->getSubject(),
             $campaignEntity->getFrom(),
-            $campaignEntity->getTo(),
             $campaignEntity->getReply(),
+            $campaignEntity->getTo(),
             $campaignEntity->getTemplate(),
             $campaignEntity->getType()
         );

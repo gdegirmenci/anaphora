@@ -7,6 +7,7 @@ use App\Events\CircuitBreaker\CircuitBreakerStatusUpdated;
 use App\ValueObjects\CircuitBreaker\Keys;
 use App\ValueObjects\CircuitBreaker\Tracker;
 use Exception;
+use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Redis;
@@ -23,9 +24,9 @@ class CircuitBreakerService
 
     /**
      * CircuitBreakerService constructor.
-     * @param ClientInterface $client
+     * @param Client $client
      */
-    public function __construct(ClientInterface $client)
+    public function __construct(Client $client)
     {
         $this->client = $client;
     }
@@ -61,6 +62,7 @@ class CircuitBreakerService
         }
 
         $this->updateAs($tracker->getKeys(), CircuitBreakerEnums::HALF_OPENED);
+        $this->increaseFailedCount($tracker->getKeys()->getFailedCountKey());
     }
 
     /**
@@ -70,8 +72,8 @@ class CircuitBreakerService
      */
     protected function updateAs(Keys $keys, int $status): void
     {
-        Redis::setex($keys->getStatusKey(), $status, CircuitBreakerEnums::STATUS_TIMEOUT);
-        $this->increaseFailedCount($keys->getFailedCountKey());
+        Redis::set($keys->getStatusKey(), $status);
+        Redis::expire($keys->getStatusKey(), CircuitBreakerEnums::STATUS_TIMEOUT);
     }
 
     /**

@@ -7,6 +7,7 @@ use App\Services\CircuitBreakerService;
 use App\ValueObjects\CircuitBreaker\Keys;
 use App\ValueObjects\CircuitBreaker\Tracker;
 use Exception;
+use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Carbon;
@@ -44,7 +45,7 @@ class CircuitBreakerServiceTest extends ServiceTestSuite
      */
     public function setService(): void
     {
-        $this->client = $this->createMock(ClientInterface::class);
+        $this->client = $this->createMock(Client::class);
         $this->service = new CircuitBreakerService($this->client);
     }
 
@@ -110,7 +111,7 @@ class CircuitBreakerServiceTest extends ServiceTestSuite
      * @test
      * @covers ::updateCircuitBreakerStatus
      */
-    function it_should_update_circuit_breaker_status_as_status_when_it_is_half_opened_and_exceed_max_failed_count()
+    function it_should_update_circuit_breaker_status_as_opened_when_it_is_half_opened_and_exceed_max_failed_count()
     {
         $this->setServiceMock(['updateAs']);
         $provider = $this->faker->word;
@@ -132,7 +133,7 @@ class CircuitBreakerServiceTest extends ServiceTestSuite
      */
     function it_should_update_circuit_breaker_status_as_half_opened_when_it_is_not_half_opened()
     {
-        $this->setServiceMock(['updateAs']);
+        $this->setServiceMock(['updateAs', 'increaseFailedCount']);
         $provider = $this->faker->word;
         $campaignId = random_int(1, 10);
         $tracker = new Tracker(new Keys($provider), $campaignId);
@@ -140,8 +141,13 @@ class CircuitBreakerServiceTest extends ServiceTestSuite
         $failedCountKey = $provider . self::FAILED_COUNT_KEY;
 
         Redis::shouldReceive('get')->with($statusKey)->andReturn(self::CLOSED);
+        Redis::shouldReceive('exists')->with($statusKey)->andReturn(false);
         Redis::shouldReceive('get')->with($failedCountKey)->andReturn(random_int(0, 2));
         $this->service->expects($this->once())->method('updateAs')->with($tracker->getKeys(), self::HALF_OPENED);
+        $this->service
+            ->expects($this->once())
+            ->method('increaseFailedCount')
+            ->with($tracker->getKeys()->getFailedCountKey());
 
         $this->service->updateCircuitBreakerStatus($tracker);
     }
@@ -152,7 +158,7 @@ class CircuitBreakerServiceTest extends ServiceTestSuite
      */
     function it_should_update_circuit_breaker_status_as_half_opened_when_it_is_not_exceed_max_failed_count()
     {
-        $this->setServiceMock(['updateAs']);
+        $this->setServiceMock(['updateAs', 'increaseFailedCount']);
         $provider = $this->faker->word;
         $campaignId = random_int(1, 10);
         $tracker = new Tracker(new Keys($provider), $campaignId);
@@ -162,6 +168,10 @@ class CircuitBreakerServiceTest extends ServiceTestSuite
         Redis::shouldReceive('get')->with($statusKey)->andReturn(self::HALF_OPENED);
         Redis::shouldReceive('get')->with($failedCountKey)->andReturn(random_int(0, 2));
         $this->service->expects($this->once())->method('updateAs')->with($tracker->getKeys(), self::HALF_OPENED);
+        $this->service
+            ->expects($this->once())
+            ->method('increaseFailedCount')
+            ->with($tracker->getKeys()->getFailedCountKey());
 
         $this->service->updateCircuitBreakerStatus($tracker);
     }
@@ -172,13 +182,12 @@ class CircuitBreakerServiceTest extends ServiceTestSuite
      */
     function it_should_update_as_with_given_keys_and_status()
     {
-        $this->setServiceMock(['increaseFailedCount']);
         $provider = $this->faker->word;
         $keys = new Keys($provider);
         $status = random_int(0, 2);
 
-        Redis::shouldReceive('setex')->once()->with($keys->getStatusKey(), $status, self::STATUS_TIMEOUT);
-        $this->service->expects($this->once())->method('increaseFailedCount')->with($keys->getFailedCountKey());
+        Redis::shouldReceive('set')->once()->with($keys->getStatusKey(), $status);
+        Redis::shouldReceive('expire')->once()->with($keys->getStatusKey(), self::STATUS_TIMEOUT);
 
         $this->invokeMethod($this->service, 'updateAs', [$keys, $status]);
     }

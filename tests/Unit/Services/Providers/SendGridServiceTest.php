@@ -2,10 +2,13 @@
 
 namespace Tests\Unit\Services\Providers;
 
+use App\Repositories\Campaign\CampaignRepository;
+use App\Repositories\Campaign\CampaignRepositoryInterface;
 use App\Services\Providers\ProviderServiceInterface;
 use App\Services\Providers\SendGridService;
 use App\ValueObjects\Email\Email;
 use Illuminate\Foundation\Testing\WithFaker;
+use PHPUnit\Framework\MockObject\MockObject;
 use Tests\Suites\ServiceTestSuite;
 
 /**
@@ -37,7 +40,9 @@ class SendGridServiceTest extends ServiceTestSuite
             $this->faker->sentence,
             'text'
         );
-        $this->service = new SendGridService($this->email);
+        /** @var CampaignRepositoryInterface|MockObject $campaignRepository */
+        $campaignRepository = $this->createMock(CampaignRepository::class);
+        $this->service = new SendGridService($campaignRepository, $this->email);
     }
 
     /**
@@ -70,12 +75,12 @@ class SendGridServiceTest extends ServiceTestSuite
      */
     function it_should_return_body()
     {
-        $body = [
+        $body = collect([
             'personalizations' => [['to' => $this->email->getTo(), 'subject' => $this->email->getSubject()]],
             'from' => $this->email->getFrom()->toArray(),
             'reply_to' => $this->email->getReply()->toArray(),
-            'content' => $this->email->getReply()->toArray(),
-        ];
+            'content' => [$this->email->getTemplate()->toArray()],
+        ]);
 
         $this->assertEquals($body, $this->service->getBody());
     }

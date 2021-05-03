@@ -3,7 +3,9 @@
 namespace App\Services\Providers;
 
 use App\Enums\ProviderEnums;
+use App\Repositories\Campaign\CampaignRepositoryInterface;
 use App\ValueObjects\Email\Email;
+use Illuminate\Support\Collection;
 
 /**
  * Class SendGridService
@@ -13,11 +15,12 @@ class SendGridService extends BaseProviderService
 {
     /**
      * SendGridService constructor.
+     * @param CampaignRepositoryInterface $campaignRepository
      * @param Email $email
      */
-    public function __construct(Email $email)
+    public function __construct(CampaignRepositoryInterface $campaignRepository, Email $email)
     {
-        parent::__construct($email);
+        parent::__construct($campaignRepository, $email);
     }
 
     /**
@@ -40,16 +43,16 @@ class SendGridService extends BaseProviderService
     }
 
     /**
-     * @return array
+     * @return Collection
      */
-    public function getBody(): array
+    public function getBody(): Collection
     {
-        return [
+        return collect([
             'personalizations' => [['to' => $this->email->getTo(), 'subject' => $this->email->getSubject()]],
             'from' => $this->email->getFrom()->toArray(),
             'reply_to' => $this->email->getReply()->toArray(),
-            'content' => $this->email->getReply()->toArray(),
-        ];
+            'content' => [$this->email->getTemplate()->toArray()],
+        ]);
     }
 
     /**

@@ -72,7 +72,7 @@ class CampaignEntity
      */
     public function getType(): string
     {
-        return Arr::get($this->payload, 'type') ?? self::DEFAULT_TYPE;
+        return self::DEFAULT_TYPE;
     }
 
     /**
@@ -108,8 +108,8 @@ class CampaignEntity
         return new Email(
             $this->getSubject(),
             $this->getFrom(),
-            $this->getTo(),
             $this->getReply(),
+            $this->getTo(),
             $this->getTemplate(),
             $this->getType()
         );

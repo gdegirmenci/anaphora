@@ -42,12 +42,13 @@ class CampaignSenderTest extends TestCase
      */
     function it_should_dispatch_another_campaign_sender_dispatcher_with_other_provider_when_circuit_is_opened()
     {
+        Event::fake();
         Queue::fake();
         $campaignEntity = new CampaignEntity([]);
         $campaignId = random_int(1, 10);
         $campaignEntity->setCampaignId($campaignId);
         $provider = $this->faker->word;
-        $fallBackProvider = $this->faker->word;
+        $availableProvider = $this->faker->word;
         $job = new CampaignSender($campaignEntity, $provider);
         /** @var ProviderServiceFactory|MockObject $providerServiceFactory */
         $providerServiceFactory = $this->createMock(ProviderServiceFactory::class);
@@ -61,16 +62,30 @@ class CampaignSenderTest extends TestCase
             ->method('make')
             ->with($campaignEntity, $provider)
             ->willReturn($sendGridService);
+        $sendGridService->expects($this->once())
+            ->method('switchProvider')
+            ->with($campaignId)
+            ->willReturn($availableProvider);
         Redis::shouldReceive('get')->with($keys->getStatusKey())->andReturn(self::OPENED);
-        $sendGridService->expects($this->once())->method('switchProvider')->willReturn($fallBackProvider);
+        $sendGridService->expects($this->once())->method('switchProvider')->willReturn($availableProvider);
 
         $job->handle($providerServiceFactory, $circuitBreakerService);
 
         Queue::assertPushed(
             CampaignSenderDispatcher::class,
-            function (CampaignSenderDispatcher $campaignSenderDispatcher) use ($campaignEntity, $fallBackProvider) {
+            function (CampaignSenderDispatcher $campaignSenderDispatcher) use ($campaignEntity, $availableProvider) {
                 $this->assertProperty($campaignSenderDispatcher, 'campaignEntity', $campaignEntity);
-                $this->assertProperty($campaignSenderDispatcher, 'provider', $fallBackProvider);
+                $this->assertProperty($campaignSenderDispatcher, 'provider', $availableProvider);
+
+                return true;
+            }
+        );
+        Event::assertDispatched(
+            CampaignStatusUpdated::class,
+            function (CampaignStatusUpdated $event) use ($campaignId, $provider) {
+                $this->assertProperty($event, 'campaignId', $campaignId);
+                $this->assertProperty($event, 'provider', $provider);
+                $this->assertProperty($event, 'status', self::FAILED);
 
                 return true;
             }
@@ -81,7 +96,99 @@ class CampaignSenderTest extends TestCase
      * @test
      * @covers ::handle
      */
-    function it_should_dispatch_another_campaign_sender_dispatcher_when_status_is_false()
+    function it_should_should_not_dispatch_another_dispatcher_when_circuit_is_opened_and_available_provider_is_false()
+    {
+        Event::fake();
+        $campaignEntity = new CampaignEntity([]);
+        $campaignId = random_int(1, 10);
+        $campaignEntity->setCampaignId($campaignId);
+        $provider = $this->faker->word;
+        $availableProvider = $this->faker->word;
+        $job = new CampaignSender($campaignEntity, $provider);
+        /** @var ProviderServiceFactory|MockObject $providerServiceFactory */
+        $providerServiceFactory = $this->createMock(ProviderServiceFactory::class);
+        /** @var ProviderServiceInterface|MockObject $sendGridService */
+        $sendGridService = $this->createMock(SendGridService::class);
+        /** @var CircuitBreakerService|MockObject $circuitBreakerService */
+        $circuitBreakerService = $this->createMock(CircuitBreakerService::class);
+        $keys = new Keys($provider);
+
+        $providerServiceFactory->expects($this->once())
+            ->method('make')
+            ->with($campaignEntity, $provider)
+            ->willReturn($sendGridService);
+        $sendGridService->expects($this->once())->method('switchProvider')->with($campaignId)->willReturn(null);
+        Redis::shouldReceive('get')->with($keys->getStatusKey())->andReturn(self::OPENED);
+        $sendGridService->expects($this->once())->method('switchProvider')->willReturn($availableProvider);
+
+        $job->handle($providerServiceFactory, $circuitBreakerService);
+
+        Event::assertDispatched(
+            CampaignStatusUpdated::class,
+            function (CampaignStatusUpdated $event) use ($campaignId, $provider) {
+                $this->assertProperty($event, 'campaignId', $campaignId);
+                $this->assertProperty($event, 'provider', $provider);
+                $this->assertProperty($event, 'status', self::FAILED);
+
+                return true;
+            }
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::handle
+     */
+    function it_should_dispatch_another_dispatcher_when_status_is_false()
+    {
+        Event::fake();
+        $campaignEntity = new CampaignEntity([]);
+        $campaignId = random_int(1, 10);
+        $campaignEntity->setCampaignId($campaignId);
+        $provider = $this->faker->word;
+        $job = new CampaignSender($campaignEntity, $provider);
+        /** @var ProviderServiceFactory|MockObject $providerServiceFactory */
+        $providerServiceFactory = $this->createMock(ProviderServiceFactory::class);
+        /** @var ProviderServiceInterface|MockObject $sendGridService */
+        $sendGridService = $this->createMock(SendGridService::class);
+        /** @var CircuitBreakerService|MockObject $circuitBreakerService */
+        $circuitBreakerService = $this->createMock(CircuitBreakerService::class);
+        $keys = new Keys($provider);
+        $tracker = new Tracker($keys, $campaignId);
+        /** @var RequestInterface|MockObject $request */
+        $request = $this->createMock(RequestInterface::class);
+
+        $providerServiceFactory->expects($this->once())
+            ->method('make')
+            ->with($campaignEntity, $provider)
+            ->willReturn($sendGridService);
+        $sendGridService->expects($this->once())->method('switchProvider')->willReturn(null);
+        Redis::shouldReceive('get')->with($keys->getStatusKey())->andReturn(self::CLOSED);
+        $sendGridService->expects($this->once())->method('getRequest')->willReturn($request);
+        $circuitBreakerService->expects($this->once())
+            ->method('makeRequest')
+            ->with($request, $tracker)
+            ->willReturn(false);
+
+        $job->handle($providerServiceFactory, $circuitBreakerService);
+
+        Event::assertDispatched(
+            CampaignStatusUpdated::class,
+            function (CampaignStatusUpdated $event) use ($campaignId, $provider) {
+                $this->assertProperty($event, 'campaignId', $campaignId);
+                $this->assertProperty($event, 'provider', $provider);
+                $this->assertProperty($event, 'status', self::FAILED);
+
+                return true;
+            }
+        );
+    }
+
+    /**
+     * @test
+     * @covers ::handle
+     */
+    function it_should_not_dispatcher_another_dispatcher_when_status_is_false_and_available_provider_is_false()
     {
         Event::fake();
         Queue::fake();

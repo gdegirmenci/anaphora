@@ -3,8 +3,10 @@
 namespace App\Services\Providers;
 
 use App\Enums\ProviderEnums;
+use App\Repositories\Campaign\CampaignRepository;
 use App\ValueObjects\Email\Email;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 /**
  * Class MailJetService
@@ -14,11 +16,12 @@ class MailJetService extends BaseProviderService
 {
     /**
      * MailJetService constructor.
+     * @param CampaignRepository $campaignRepository
      * @param Email $email
      */
-    public function __construct(Email $email)
+    public function __construct(CampaignRepository $campaignRepository, Email $email)
     {
-        parent::__construct($email);
+        parent::__construct($campaignRepository, $email);
     }
 
     /**
@@ -41,11 +44,11 @@ class MailJetService extends BaseProviderService
     }
 
     /**
-     * @return array
+     * @return Collection
      */
-    public function getBody(): array
+    public function getBody(): Collection
     {
-        return [
+        return collect([
             'Messages' => [
                 [
                     'From' => [
@@ -58,10 +61,11 @@ class MailJetService extends BaseProviderService
                     ],
                     'To' => $this->getRecipients(),
                     'Subject' => $this->email->getSubject(),
-                    'TextPart' => $this->email->getTemplate(),
+                    'TextPart' => $this->email->getTemplate()->getContent(),
+                    'HTMLPart' => '',
                 ],
             ],
-        ];
+        ]);
     }
 
     /**

@@ -4,6 +4,8 @@ namespace Tests\Unit\Factories;
 
 use App\Entities\CampaignEntity;
 use App\Factories\ProviderServiceFactory;
+use App\Repositories\Campaign\CampaignRepository;
+use App\Repositories\Campaign\CampaignRepositoryInterface;
 use App\Services\Providers\MailJetService;
 use App\Services\Providers\SendGridService;
 use Tests\Suites\FactoryTestSuite;
@@ -23,13 +25,16 @@ class ProviderServiceFactoryTest extends FactoryTestSuite
 
     /** @var ProviderServiceFactory */
     private $factory;
+    /** @var CampaignRepositoryInterface */
+    private $campaignRepository;
 
     /**
      * @return void
      */
     public function setFactory(): void
     {
-        $this->factory = new ProviderServiceFactory();
+        $this->campaignRepository = $this->createMock(CampaignRepository::class);
+        $this->factory = new ProviderServiceFactory($this->campaignRepository);
     }
 
     /**
@@ -50,13 +55,14 @@ class ProviderServiceFactoryTest extends FactoryTestSuite
 
     /**
      * @test
+     * @covers ::__construct
      * @covers ::make
      */
     function it_should_return_send_grid_service_when_provider_is_send_grid()
     {
         $payload = $this->getPayload();
         $campaignEntity = new CampaignEntity($payload);
-        $sendGridService = new SendGridService($campaignEntity->getEmail());
+        $sendGridService = new SendGridService($this->campaignRepository, $campaignEntity->getEmail());
 
         $this->assertEquals($sendGridService, $this->factory->make($campaignEntity, self::SEND_GRID));
     }
@@ -69,7 +75,7 @@ class ProviderServiceFactoryTest extends FactoryTestSuite
     {
         $payload = $this->getPayload();
         $campaignEntity = new CampaignEntity($payload);
-        $mailJetService = new MailJetService($campaignEntity->getEmail());
+        $mailJetService = new MailJetService($this->campaignRepository, $campaignEntity->getEmail());
 
         $this->assertEquals($mailJetService, $this->factory->make($campaignEntity, self::MAIL_JET));
     }
