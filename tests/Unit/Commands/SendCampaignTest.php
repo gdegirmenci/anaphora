@@ -137,6 +137,23 @@ class SendCampaignTest extends TestCase
 
     /**
      * @test
+     * @covers ::payload
+     */
+    function it_should_return_null_when_payload_could_not_be_parsed()
+    {
+        $key = $this->faker->word;
+        $value = $this->faker->word;
+        $argument = sprintf('{"%s:"%s"}', $key, $value);
+        /** @var SendCampaign|MockObject $sendCampaign */
+        $sendCampaign = $this->getMockBuilder(SendCampaign::class)->onlyMethods(['argument'])->getMock();
+
+        $sendCampaign->expects($this->once())->method('argument')->willReturn($argument);
+
+        $this->assertNull($this->invokeMethod($sendCampaign, 'payload'));
+    }
+
+    /**
+     * @test
      * @covers ::campaignEntity
      */
     function it_should_return_campaign_entity()
