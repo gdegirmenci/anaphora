@@ -2,13 +2,17 @@
   <div class="d-flex flex-no-wrap justify-space-between align-center">
     <div>
       <v-card-title :class="alignPadding">
-        {{ overline }}
+        <span class="heading">
+          {{ overline }}
+        </span>
       </v-card-title>
       <v-card-text
         v-if="hasHeadline"
         class="headline font-weight-bold"
       >
-        {{ headline }}
+        <span class="heading">
+          {{ headline }}
+        </span>
       </v-card-text>
     </div>
     <div class="pr-5">

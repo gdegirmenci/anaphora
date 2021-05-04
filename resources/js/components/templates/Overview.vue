@@ -1,9 +1,11 @@
 <template>
   <div>
     <v-row>
-      <h2 class="pa-3 text-h6">
-        {{ title }}
-      </h2>
+      <div class="pa-3 text-h6">
+        <span class="heading">
+          {{ title }}
+        </span>
+      </div>
     </v-row>
     <v-row>
       <card-info

@@ -38,7 +38,9 @@
           <v-icon>mdi-close</v-icon>
         </v-btn>
         <v-toolbar-title class="text-subtitle-2 ml-2">
-          {{ createCampaignText }} CAMPAIGN
+          <span class="heading">
+            {{ createCampaignText }} CAMPAIGN
+          </span>
         </v-toolbar-title>
       </v-toolbar>
       <v-card-text>
@@ -172,8 +174,10 @@
                   cols="1"
                   class="mt-3"
                 >
-                  <v-subheader>
-                    Content
+                  <v-subheader class="subtitle-1">
+                    <span class="heading">
+                      Content
+                    </span>
                   </v-subheader>
                 </v-col>
                 <v-col

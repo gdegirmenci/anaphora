@@ -7,7 +7,9 @@
   >
     <v-container class="py-0 fill-height">
       <v-toolbar-title class="font-weight-bold text-subtitle-1 mr-10">
-        {{ title }}
+        <span class="heading">
+          {{ title }}
+        </span>
       </v-toolbar-title>
       <v-btn
         text
