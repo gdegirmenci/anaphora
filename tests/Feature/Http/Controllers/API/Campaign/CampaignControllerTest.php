@@ -64,6 +64,7 @@ class CampaignControllerTest extends TestCase
             'reply' => ['name' => $this->faker->name, 'email' => $this->faker->email],
             'to' => [['name' => $this->faker->name, 'email' => $this->faker->email]],
             'template' => $this->faker->text,
+            'type' => 'text',
         ];
         $response = $this->post(route('create-campaign', $requestData));
 
