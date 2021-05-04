@@ -2,7 +2,9 @@
 
 namespace Tests\Feature\Http\Controllers\API\Campaign;
 
+use App\Jobs\Campaign\CampaignSenderDispatcher;
 use App\Models\CampaignLog;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -54,17 +56,26 @@ class CampaignControllerTest extends TestCase
      */
     function it_should_create_campaign()
     {
+        Queue::fake();
         $requestData = [
             'name' => $this->faker->word,
             'subject' => $this->faker->sentence,
             'from' => ['name' => $this->faker->name, 'email' => $this->faker->email],
             'reply' => ['name' => $this->faker->name, 'email' => $this->faker->email],
-            'to' => ['name' => $this->faker->name, 'email' => $this->faker->email],
+            'to' => [['name' => $this->faker->name, 'email' => $this->faker->email]],
             'template' => $this->faker->text,
         ];
         $response = $this->post(route('create-campaign', $requestData));
 
         $response->assertOk();
         $this->assertDatabaseHas('campaigns', ['name' => $requestData['name'], 'template' => $requestData['template']]);
+        Queue::assertPushed(
+            CampaignSenderDispatcher::class,
+            function (CampaignSenderDispatcher $campaignSenderDispatcher) {
+                $this->assertProperty($campaignSenderDispatcher, 'provider', config('mail.primary_provider'));
+
+                return true;
+            }
+        );
     }
 }

@@ -13,6 +13,8 @@ use Tests\Suites\RequestTestSuite;
  */
 class PaginateRequestTest extends RequestTestSuite
 {
+    const DEFAULT_PER_PAGE = 10;
+
     /**
      * @return Request
      */
@@ -40,6 +42,27 @@ class PaginateRequestTest extends RequestTestSuite
     function it_should_assert_count_validation_rules()
     {
         $this->assertCount(count($this->rulesProvider()), $this->getRules());
+    }
+
+    /**
+     * @test
+     * @covers ::perPage
+     */
+    function it_should_return_per_page()
+    {
+        $perPage = random_int(1, 10);
+        $request = new PaginateRequest(compact('perPage'));
+
+        $this->assertEquals($perPage, $request->perPage());
+    }
+
+    /**
+     * @test
+     * @covers ::perPage
+     */
+    function it_should_return_per_page_as_default_per_page_when_request_does_not_have_per_page()
+    {
+        $this->assertEquals(self::DEFAULT_PER_PAGE, $this->getRequest()->perPage());
     }
 
     /**
