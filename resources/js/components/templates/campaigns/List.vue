@@ -9,12 +9,15 @@
       <v-col col="3">
         <v-data-table
           outlined
+          disable-sort
+          :calculate-widths="true"
           :headers="headers"
           :items="campaigns.data"
           :item-key="title"
           :items-per-page="campaigns.meta.per_page"
           :server-items-length="totalCampaigns"
           :loading="loading"
+          :footer-props="{ itemsPerPageOptions: [10, 20, 30] }"
           class="elevation-0"
           @pagination="pagination"
         >
@@ -50,11 +53,11 @@ export default {
         return {
             title: 'Campaigns',
             headers: [
-                { text: 'Campaign ID', value: 'id' },
-                { text: 'Campaign Name', value: 'name' },
-                { text: 'Provider', value: 'provider' },
-                { text: 'Date', value: 'date' },
-                { text: 'Status', value: 'status' },
+                { text: 'Campaign ID', value: 'id', width: 50 },
+                { text: 'Campaign Name', value: 'name', width: 200 },
+                { text: 'Provider', value: 'provider', width: 100 },
+                { text: 'Date', value: 'date', width: 200 },
+                { text: 'Status', value: 'status', width: 100 },
             ],
             statusColors: { 'Queue': 'amber', 'Sent': 'green', 'Failed': 'red' },
             loading: false
@@ -82,7 +85,7 @@ export default {
          */
         pagination(pagination) {
             this.loading = true;
-            this.$emit('fetchCampaigns', pagination.page);
+            this.$emit('fetchCampaigns', pagination);
         }
     }
 };

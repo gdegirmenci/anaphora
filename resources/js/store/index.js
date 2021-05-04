@@ -38,10 +38,12 @@ export default new Vuex.Store({
         /**
          * @name fetchCampaigns
          * @param {function} [commit]
-         * @param {number} page
+         * @param {object} pagination
          */
-        async [Action.FETCH_CAMPAIGNS]({ commit }, page = 1) {
-            const { data } = await window.axios.get(`${ApiEnums.FETCH_CAMPAIGNS_URL}?page=${page}`);
+        async [Action.FETCH_CAMPAIGNS]({ commit }, pagination = { page: 1, itemsPerPage: 10 }) {
+            const { data } = await window
+                .axios
+                .get(`${ApiEnums.FETCH_CAMPAIGNS_URL}?page=${pagination.page}&perPage=${pagination.itemsPerPage}`);
 
             commit(Mutation.SET_CAMPAIGNS, data);
         },

@@ -19,7 +19,7 @@ class PaginateRequest extends Request
     {
         return [
             'page' => 'int|min:0',
-            'perPage' => 'int|max:50',
+            'perPage' => 'int|min:10|max:30',
         ];
     }
 
