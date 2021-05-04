@@ -20,6 +20,9 @@ class TrackerTest extends TestCase
     const CLOSED = 0;
     const HALF_OPENED = 1;
     const OPENED = 2;
+    const CLOSED_ALIAS = 'closed';
+    const HALF_OPENED_ALIAS = 'half-opened';
+    const OPENED_ALIAS = 'opened';
     const MAX_FAILED_COUNT = 3;
     const STATUS_KEY = ':circuit-breaker:status';
     const FAILED_COUNT_KEY = ':circuit-breaker:failed-count';
@@ -199,6 +202,60 @@ class TrackerTest extends TestCase
         $tracker = new Tracker($keys, $campaignId);
 
         $this->assertEquals($campaignId, $tracker->getCampaignId());
+    }
+
+    /**
+     * @test
+     * @covers ::__construct
+     * @covers ::getCampaignId
+     */
+    function it_should_return_null_when_campaign_id_is_not_given()
+    {
+        $provider = $this->faker->word;
+        $keys = new Keys($provider);
+        $tracker = new Tracker($keys);
+
+        $this->assertNull($tracker->getCampaignId());
+    }
+
+    /**
+     * @test
+     * @covers ::getStatusAlias
+     */
+    function it_should_return_opened_alias_when_it_is_opened()
+    {
+        $tracker = $this->getTracker();
+
+        Redis::shouldReceive('get')->once()->with($tracker->getKeys()->getStatusKey())->andReturn(self::OPENED);
+
+        $this->assertEquals(self::OPENED_ALIAS, $tracker->getStatusAlias());
+    }
+
+    /**
+     * @test
+     * @covers ::getStatusAlias
+     */
+    function it_should_return_half_opened_alias_when_it_is_half_opened()
+    {
+        $tracker = $this->getTracker();
+
+        Redis::shouldReceive('get')->with($tracker->getKeys()->getStatusKey())->andReturn(self::HALF_OPENED);
+
+        $this->assertEquals(self::HALF_OPENED_ALIAS, $tracker->getStatusAlias());
+    }
+
+    /**
+     * @test
+     * @covers ::getStatusAlias
+     */
+    function it_should_return_closed_alias_when_it_is_not_opened_or_half_opened()
+    {
+        $tracker = $this->getTracker();
+
+        Redis::shouldReceive('get')->with($tracker->getKeys()->getStatusKey())->andReturn(self::CLOSED);
+        Redis::shouldReceive('exists')->with($tracker->getKeys()->getStatusKey())->andReturn(true);
+
+        $this->assertEquals(self::CLOSED_ALIAS, $tracker->getStatusAlias());
     }
 
     /**

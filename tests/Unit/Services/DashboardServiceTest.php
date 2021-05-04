@@ -2,9 +2,12 @@
 
 namespace Tests\Unit\Services;
 
+use App\Enums\ProviderEnums;
 use App\Repositories\Campaign\CampaignRepository;
 use App\Repositories\Campaign\CampaignRepositoryInterface;
 use App\Services\DashboardService;
+use App\ValueObjects\CircuitBreaker\Keys;
+use App\ValueObjects\CircuitBreaker\Tracker;
 use Illuminate\Foundation\Testing\WithFaker;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\Suites\ServiceTestSuite;
@@ -46,8 +49,8 @@ class DashboardServiceTest extends ServiceTestSuite
 
     /**
      * @test
-     * @covers ::getDashboardData
      * @covers ::__construct
+     * @covers ::getDashboardData
      */
     function it_should_return_dashboard_data_with_overview_and_provider_status()
     {
@@ -86,9 +89,11 @@ class DashboardServiceTest extends ServiceTestSuite
      */
     function it_should_return_provider_status()
     {
+        $sendGridTracker = new Tracker(new Keys(ProviderEnums::SEND_GRID));
+        $mailJetTracker = new Tracker(new Keys(ProviderEnums::MAIL_JET));
         $providerStatus = [
-            ['name' => 'SendGrid', 'status' => 'closed'],
-            ['name' => 'MailJet', 'status' => 'half-opened'],
+            ['name' => ProviderEnums::SEND_GRID_ALIAS, 'status' => $sendGridTracker->getStatusAlias()],
+            ['name' => ProviderEnums::MAIL_JET_ALIAS, 'status' => $mailJetTracker->getStatusAlias()],
         ];
 
         $this->assertEquals($providerStatus, $this->invokeMethod($this->service, 'getProviderStatus'));

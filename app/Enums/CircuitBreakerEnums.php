@@ -16,4 +16,7 @@ final class CircuitBreakerEnums
     const INTERVAL = 5;
     const STATUS_TIMEOUT = Carbon::SECONDS_PER_MINUTE * self::INTERVAL;
     const FAILED_COUNT_TIMEOUT = Carbon::SECONDS_PER_MINUTE * self::INTERVAL * 2;
+    const CLOSED_ALIAS = 'closed';
+    const HALF_OPENED_ALIAS = 'half-opened';
+    const OPENED_ALIAS = 'opened';
 }

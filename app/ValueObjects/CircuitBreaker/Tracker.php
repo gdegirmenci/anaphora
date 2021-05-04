@@ -19,9 +19,9 @@ final class Tracker
     /**
      * Tracker constructor.
      * @param Keys $keys
-     * @param int $campaignId
+     * @param int|null $campaignId
      */
-    public function __construct(Keys $keys, int $campaignId)
+    public function __construct(Keys $keys, int $campaignId = null)
     {
         $this->keys = $keys;
         $this->campaignId = $campaignId;
@@ -68,11 +68,27 @@ final class Tracker
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getCampaignId(): int
+    public function getCampaignId(): ?int
     {
         return $this->campaignId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatusAlias(): string
+    {
+        if ($this->isOpened()) {
+            return CircuitBreakerEnums::OPENED_ALIAS;
+        }
+
+        if ($this->isHalfOpened()) {
+            return CircuitBreakerEnums::HALF_OPENED_ALIAS;
+        }
+
+        return CircuitBreakerEnums::CLOSED_ALIAS;
     }
 
     /**

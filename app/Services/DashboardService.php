@@ -2,7 +2,10 @@
 
 namespace App\Services;
 
+use App\Enums\ProviderEnums;
 use App\Repositories\Campaign\CampaignRepositoryInterface;
+use App\ValueObjects\CircuitBreaker\Keys;
+use App\ValueObjects\CircuitBreaker\Tracker;
 
 /**
  * Class DashboardService
@@ -47,6 +50,12 @@ class DashboardService
      */
     protected function getProviderStatus(): array
     {
-        return [['name' => 'SendGrid', 'status' => 'closed'], ['name' => 'MailJet', 'status' => 'half-opened']];
+        $sendGridTracker = new Tracker(new Keys(ProviderEnums::SEND_GRID));
+        $mailJetTracker = new Tracker(new Keys(ProviderEnums::MAIL_JET));
+
+        return [
+            ['name' => ProviderEnums::SEND_GRID_ALIAS, 'status' => $sendGridTracker->getStatusAlias()],
+            ['name' => ProviderEnums::MAIL_JET_ALIAS, 'status' => $mailJetTracker->getStatusAlias()],
+        ];
     }
 }
