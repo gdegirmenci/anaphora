@@ -48,6 +48,16 @@ class MailJetService extends BaseProviderService
      */
     public function getBody(): Collection
     {
+        $content = $this->email->getTemplate()->getContent();
+        $text = '';
+        $html = '';
+
+        if ($this->email->getTemplate()->isText()) {
+            $text = $content;
+        } else {
+            $html = $content;
+        }
+
         return collect([
             'Messages' => [
                 [
@@ -61,8 +71,8 @@ class MailJetService extends BaseProviderService
                     ],
                     'To' => $this->getRecipients(),
                     'Subject' => $this->email->getSubject(),
-                    'TextPart' => $this->email->getTemplate()->getContent(),
-                    'HTMLPart' => '',
+                    'TextPart' => $text,
+                    'HTMLPart' => $html,
                 ],
             ],
         ]);

@@ -22,6 +22,7 @@ class CreateRequest extends Request
             'reply' => 'required|array',
             'to' => 'required|array',
             'template' => 'required|string',
+            'type' => 'required|string',
         ];
     }
 }

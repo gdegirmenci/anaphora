@@ -15,6 +15,8 @@ class TemplateTest extends TestCase
 {
     use WithFaker;
 
+    const TEXT_TYPE = 'text/plain';
+
     /**
      * @test
      * @covers ::getType
@@ -38,6 +40,30 @@ class TemplateTest extends TestCase
         $template = new Template($content, $this->faker->word);
 
         $this->assertEquals($content, $template->getContent());
+    }
+
+    /**
+     * @test
+     * @covers ::isText
+     */
+    function it_should_return_true_when_type_is_text()
+    {
+        $content = $this->faker->sentence;
+        $template = new Template($content, self::TEXT_TYPE);
+
+        $this->assertTrue($template->isText());
+    }
+
+    /**
+     * @test
+     * @covers ::isText
+     */
+    function it_should_return_false_when_type_is_not_text()
+    {
+        $content = $this->faker->sentence;
+        $template = new Template($content, $this->faker->word);
+
+        $this->assertFalse($template->isText());
     }
 
     /**

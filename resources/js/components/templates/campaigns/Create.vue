@@ -166,21 +166,47 @@
                 />
               </v-col>
             </v-row>
-            <v-row>
+            <v-row class="mt-0">
+              <v-row justify="space-between">
+                <v-col
+                  cols="1"
+                  class="mt-3"
+                >
+                  <v-subheader>
+                    Content
+                  </v-subheader>
+                </v-col>
+                <v-col
+                  cols="auto"
+                  class="mr-7"
+                >
+                  <v-switch
+                    v-model="editor"
+                    inset
+                    :label="`Editor`"
+                    @change="updateType"
+                  />
+                </v-col>
+              </v-row>
               <v-col
                 cols="12"
                 sm="12"
                 md="12"
               >
+                <vue-editor
+                  v-if="editor"
+                  v-model="campaign.template"
+                  :use-markdown-shortcuts="true"
+                  :editor-toolbar="toolbar"
+                />
                 <v-textarea
+                  v-if="!editor"
                   v-model="campaign.template"
                   outlined
                   auto-grow
                   :rules="rules.text"
                   clearable
                   clear-icon="mdi-close-circle"
-                  label="Content"
-                  value=""
                 />
               </v-col>
             </v-row>
@@ -234,6 +260,7 @@ export default {
     data () {
         return {
             dialog: false,
+            editor: true,
             createCampaignIcon: 'mdi-plus',
             createCampaignText: 'CREATE',
             rules: {
@@ -243,13 +270,32 @@ export default {
                     email => /.+@.+/.test(email) || 'E-mail must be valid',
                 ],
             },
+            toolbar: [
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ color: [] }, { background: [] }],
+                [{ font: [] }],
+                [{ header: [false, 1, 2, 3, 4, 5, 6] }],
+                [
+                    { align: '' },
+                    { align: 'center' },
+                    { align: 'right' },
+                    { align: 'justify' }
+                ],
+                ['blockquote', 'code-block'],
+                [{ list: 'ordered' }, { list: 'bullet' }, { list: 'check' }],
+                [{ indent: '-1' }, { indent: '+1' }],
+                ['link'],
+                [{ direction: 'rtl' }],
+                ['clean']
+            ],
             campaign: {
                 name: '',
                 subject: '',
                 from: { name: '', email: '' },
                 reply: { name: '', email: '' },
                 to: [{ email: '', name: '' }],
-                template: ''
+                template: '',
+                type: 'html'
             }
         };
     },
@@ -290,6 +336,13 @@ export default {
          */
         appendOuterIcon(index) {
             return this.campaign.to.length === index + 1 ? 'mdi-plus' : '';
+        },
+
+        /**
+         * @returns {void}
+         */
+        updateType() {
+            this.campaign.type = this.editor ? 'html' : 'text';
         }
     }
 };

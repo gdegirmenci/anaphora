@@ -2,6 +2,7 @@
 
 namespace App\ValueObjects\Email\Components;
 
+use App\Enums\EmailTypeEnums;
 use Illuminate\Contracts\Support\Arrayable;
 
 /**
@@ -40,6 +41,14 @@ final class Template implements Arrayable
     public function getContent(): string
     {
         return $this->content;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isText(): bool
+    {
+        return $this->getType() === EmailTypeEnums::TEXT_TYPE;
     }
 
     /**

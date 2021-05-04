@@ -17,7 +17,9 @@ class CampaignEntityTest extends TestCase
 {
     use WithFaker;
 
-    const DEFAULT_TYPE = 'text';
+    const TEXT = 'text';
+    const TEXT_TYPE = 'text/plain';
+    const HTML_TYPE = 'text/html';
 
     /**
      * @return array
@@ -27,7 +29,7 @@ class CampaignEntityTest extends TestCase
         return [
             'name' => $this->faker->word,
             'template' => $this->faker->sentence,
-            'type' => self::DEFAULT_TYPE,
+            'type' => self::TEXT,
             'from' => ['email' => $this->faker->word],
             'reply' => ['email' => $this->faker->word],
             'to' => [['email' => $this->faker->word]],
@@ -100,12 +102,25 @@ class CampaignEntityTest extends TestCase
      * @test
      * @covers ::getType
      */
-    function it_should_return_type()
+    function it_should_return_text_when_type_is_text()
     {
         $payload = $this->getPayload();
         $campaignEntity = new CampaignEntity($payload);
 
-        $this->assertEquals(self::DEFAULT_TYPE, $campaignEntity->getType());
+        $this->assertEquals(self::TEXT_TYPE, $campaignEntity->getType());
+    }
+
+    /**
+     * @test
+     * @covers ::getType
+     */
+    function it_should_return_html_when_type_is_not_text()
+    {
+        $payload = $this->getPayload();
+        $payload['type'] = $this->faker->word;
+        $campaignEntity = new CampaignEntity($payload);
+
+        $this->assertEquals(self::HTML_TYPE, $campaignEntity->getType());
     }
 
     /**
@@ -180,7 +195,7 @@ class CampaignEntityTest extends TestCase
         $toSave = [
             'name' => Arr::get($payload, 'name'),
             'template' => Arr::get($payload, 'template'),
-            'type' => Arr::get($payload, 'type'),
+            'type' => self::TEXT_TYPE,
             'to' => Arr::get($payload, 'to'),
         ];
 

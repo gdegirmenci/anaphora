@@ -2,6 +2,7 @@
 
 namespace App\Entities;
 
+use App\Enums\EmailTypeEnums;
 use App\ValueObjects\Email\Email;
 use Illuminate\Support\Arr;
 
@@ -11,7 +12,7 @@ use Illuminate\Support\Arr;
  */
 class CampaignEntity
 {
-    const DEFAULT_TYPE = 'text';
+    const TEXT = 'text';
 
     /** @var array */
     private $payload;
@@ -72,7 +73,11 @@ class CampaignEntity
      */
     public function getType(): string
     {
-        return self::DEFAULT_TYPE;
+        if (Arr::get($this->payload, 'type') === self::TEXT) {
+            return EmailTypeEnums::TEXT_TYPE;
+        }
+
+        return EmailTypeEnums::HTML_TYPE;
     }
 
     /**

@@ -22,6 +22,8 @@ class MailJetServiceTest extends ServiceTestSuite
     use WithFaker;
 
     const PROVIDER = 'mailjet';
+    const TEXT_TYPE = 'text/plain';
+    const HTML_TYPE = 'text/html';
 
     /** @var ProviderServiceInterface|MockObject */
     private $service;
@@ -41,7 +43,7 @@ class MailJetServiceTest extends ServiceTestSuite
             ['name' => $this->faker->name, 'email' => $this->faker->email],
             [['name' => $this->faker->name, 'email' => $this->faker->email]],
             $this->faker->sentence,
-            'text'
+            self::TEXT_TYPE
         );
         $this->campaignRepository = $this->createMock(CampaignRepository::class);
         $this->service = new MailJetService($this->campaignRepository, $this->email);
@@ -87,7 +89,7 @@ class MailJetServiceTest extends ServiceTestSuite
      * @test
      * @covers ::getBody
      */
-    function it_should_return_body()
+    function it_should_return_body_and_filled_text_part_when_type_is_text()
     {
         $this->setServiceMock(['getRecipients']);
         $recipients = [['Name' => $this->faker->name, 'Email' => $this->faker->email]];
@@ -106,6 +108,47 @@ class MailJetServiceTest extends ServiceTestSuite
                     'Subject' => $this->email->getSubject(),
                     'TextPart' => $this->email->getTemplate()->getContent(),
                     'HTMLPart' => '',
+                ],
+            ],
+        ]);
+
+        $this->service->expects($this->once())->method('getRecipients')->willReturn($recipients);
+
+        $this->assertEquals($body, $this->service->getBody());
+    }
+
+    /**
+     * @test
+     * @covers ::getBody
+     */
+    function it_should_return_body_and_filled_html_part_when_type_is_html()
+    {
+        $this->setServiceMock(['getRecipients']);
+        $email = new Email(
+            $this->faker->sentence,
+            ['name' => $this->faker->name, 'email' => $this->faker->email],
+            ['name' => $this->faker->name, 'email' => $this->faker->email],
+            [['name' => $this->faker->name, 'email' => $this->faker->email]],
+            $this->faker->sentence,
+            self::HTML_TYPE
+        );
+        $this->setPrivateProperty($this->service, 'email', $email);
+        $recipients = [['Name' => $this->faker->name, 'Email' => $this->faker->email]];
+        $body = collect([
+            'Messages' => [
+                [
+                    'From' => [
+                        'Email' => $email->getFrom()->getEmail(),
+                        'Name' => $email->getFrom()->getName(),
+                    ],
+                    'ReplyTo' => [
+                        'Email' => $email->getReply()->getEmail(),
+                        'Name' => $email->getReply()->getName(),
+                    ],
+                    'To' => $recipients,
+                    'Subject' => $email->getSubject(),
+                    'TextPart' => '',
+                    'HTMLPart' => $email->getTemplate()->getContent(),
                 ],
             ],
         ]);
