@@ -236,10 +236,61 @@ If circuit is opened, sending from SendGrid for later.
 
 Every provider should have an implementation. To choose provider there is a factory named `ProviderServiceFactory`. To add new provider, first it should be defined there.
 
-After that, related service should be created under the folder, with implementing `ProviderServiceInterface`
+After that, related service should be created under the folder `app\Services\Providers\`, with extending `BaseProviderService`
 
-```bash
-app\Services\Providers\SomeNewProviderService.php
+```php
+<?php
+
+namespace App\Services\Providers;
+
+/**
+ * Class FooProviderService
+ * @package App\Services\Providers
+ */
+class FooProviderService extends BaseProvider
+{
+    /**
+     * FooProviderService constructor.
+     * @param CampaignRepository $campaignRepository
+     * @param Email $email
+     */
+    public function __construct(CampaignRepository $campaignRepository, Email $email)
+    {
+        parent::__construct($campaignRepository, $email);
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrl(): string
+    {
+        //
+    }
+
+    /**
+     * @return array
+     */
+    public function getHeaders(): array
+    {
+        //
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getBody(): Collection
+    {
+        //
+    }
+
+    /**
+     * @return string
+     */
+    public function getProvider(): string
+    {
+        // 
+    }
+}
 ```
 
 ### Vue.js & Vuetify
