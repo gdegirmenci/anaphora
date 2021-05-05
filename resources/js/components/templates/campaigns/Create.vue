@@ -313,6 +313,7 @@ export default {
         async createCampaign() {
             if (this.$refs.form.validate()) {
                 this.dialog = false;
+                this.$refs.form.reset();
 
                 await window.axios.post(ApiEnums.CREATE_CAMPAIGN_URL, {...this.campaign});
             }
