@@ -16,7 +16,6 @@
         color="light-blue lighten-5"
         class="text-capitalize"
         v-on="on"
-        @click="resetForm"
       >
         <v-icon>
           {{ createCampaignIcon }}
@@ -312,10 +311,10 @@ export default {
          * @returns {void}
          */
         async createCampaign() {
-            if (this.$refs.form.validate()) {
-                this.dialog = false;
-
+            if (await this.$refs.form.validate()) {
                 await window.axios.post(ApiEnums.CREATE_CAMPAIGN_URL, {...this.campaign});
+                await this.resetForm();
+                this.dialog = false;
             }
         },
 
@@ -358,8 +357,8 @@ export default {
         /**
          * @returns {void}
          */
-        resetForm() {
-            this.$refs.form.reset();
+        async resetForm() {
+            await this.$refs.form.reset();
             this.campaign.template = '';
             this.editor = true;
             this.campaign.type = 'html';
