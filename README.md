@@ -26,6 +26,12 @@ Enter to the container
 docker exec -it anaphora_php bash
 ```
 
+Give necessary permission to storage
+
+```bash
+chmod -R 777 storage/
+```
+
 Copy .env.example as .env
 
 ```bash
@@ -36,7 +42,7 @@ Install dependencies
 
 ```bash
 composer install
-npm install
+npm ci
 ```
 
 Generate application key
@@ -55,6 +61,13 @@ Build assets
 
 ```bash
 npm run dev
+```
+
+Start supervisor and work queue
+
+```bash
+service supervisor start
+php artisan q:w
 ```
 
 Add application URL to host file
