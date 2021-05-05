@@ -4,6 +4,7 @@ namespace App\Jobs\Campaign;
 
 use App\Entities\CampaignEntity;
 use App\Enums\CampaignStatusEnums;
+use App\Enums\CircuitBreakerEnums;
 use App\Events\Campaign\CampaignStatusUpdated;
 use App\Factories\ProviderServiceFactory;
 use App\Services\CircuitBreakerService;
@@ -62,6 +63,11 @@ class CampaignSender implements ShouldQueue
             );
 
             if (!$availableProvider) {
+                Queue::later(
+                    CircuitBreakerEnums::FAILED_COUNT_TIMEOUT,
+                    new CampaignSenderDispatcher($this->campaignEntity, $this->provider)
+                );
+
                 return;
             }
 
@@ -93,6 +99,11 @@ class CampaignSender implements ShouldQueue
         );
 
         if (!$availableProvider) {
+            Queue::later(
+                CircuitBreakerEnums::FAILED_COUNT_TIMEOUT,
+                new CampaignSenderDispatcher($this->campaignEntity, $this->provider)
+            );
+
             return;
         }
 

@@ -13,9 +13,11 @@ use App\Services\Providers\SendGridService;
 use App\ValueObjects\CircuitBreaker\Keys;
 use App\ValueObjects\CircuitBreaker\Tracker;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Redis;
+use Mockery;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\RequestInterface;
 use Tests\TestCase;
@@ -34,6 +36,8 @@ class CampaignSenderTest extends TestCase
     const FAILED = 2;
     const CLOSED = 0;
     const OPENED = 2;
+    const INTERVAL = 5;
+    const FAILED_COUNT_TIMEOUT = Carbon::SECONDS_PER_MINUTE * self::INTERVAL * 2;
 
     /**
      * @test
@@ -96,8 +100,9 @@ class CampaignSenderTest extends TestCase
      * @test
      * @covers ::handle
      */
-    function it_should_should_not_dispatch_another_dispatcher_when_circuit_is_opened_and_available_provider_is_false()
+    function it_should_should_dispatch_dispatcher_for_later_when_circuit_is_opened_and_available_provider_is_false()
     {
+        Queue::fake();
         Event::fake();
         $campaignEntity = new CampaignEntity([]);
         $campaignId = random_int(1, 10);
@@ -133,14 +138,16 @@ class CampaignSenderTest extends TestCase
                 return true;
             }
         );
+        Queue::shouldReceive('later')->with(self::FAILED_COUNT_TIMEOUT, Mockery::type(CampaignSenderDispatcher::class));
     }
 
     /**
      * @test
      * @covers ::handle
      */
-    function it_should_dispatch_another_dispatcher_when_status_is_false()
+    function it_should_dispatch_another_dispatcher_when_status_is_false_and_available_provider_is_not_exist()
     {
+        Queue::fake();
         Event::fake();
         $campaignEntity = new CampaignEntity([]);
         $campaignId = random_int(1, 10);
@@ -182,6 +189,7 @@ class CampaignSenderTest extends TestCase
                 return true;
             }
         );
+        Queue::shouldReceive('later')->with(self::FAILED_COUNT_TIMEOUT, Mockery::type(CampaignSenderDispatcher::class));
     }
 
     /**
