@@ -40,62 +40,26 @@ class CampaignEntityTest extends TestCase
     /**
      * @test
      * @covers ::__construct
-     * @covers ::getName
      */
-    function it_should_return_name()
+    function it_should_initialize_properties()
     {
         $payload = $this->getPayload();
         $campaignEntity = new CampaignEntity($payload);
+        $name = $this->getPrivateProperty($campaignEntity, 'name');
+        $subject = $this->getPrivateProperty($campaignEntity, 'subject');
+        $from = $this->getPrivateProperty($campaignEntity, 'from');
+        $reply = $this->getPrivateProperty($campaignEntity, 'reply');
+        $to = $this->getPrivateProperty($campaignEntity, 'to');
+        $template = $this->getPrivateProperty($campaignEntity, 'template');
+        $type = $this->getPrivateProperty($campaignEntity, 'type');
 
-        $this->assertEquals(Arr::get($payload, 'name'), $campaignEntity->getName());
-    }
-
-    /**
-     * @test
-     * @covers ::getTemplate
-     */
-    function it_should_return_template()
-    {
-        $payload = $this->getPayload();
-        $campaignEntity = new CampaignEntity($payload);
-
-        $this->assertEquals(Arr::get($payload, 'template'), $campaignEntity->getTemplate());
-    }
-
-    /**
-     * @test
-     * @covers ::getSubject
-     */
-    function it_should_return_subject()
-    {
-        $payload = $this->getPayload();
-        $campaignEntity = new CampaignEntity($payload);
-
-        $this->assertEquals(Arr::get($payload, 'subject'), $campaignEntity->getSubject());
-    }
-
-    /**
-     * @test
-     * @covers ::getFrom
-     */
-    function it_should_return_from()
-    {
-        $payload = $this->getPayload();
-        $campaignEntity = new CampaignEntity($payload);
-
-        $this->assertEquals(Arr::get($payload, 'from'), $campaignEntity->getFrom());
-    }
-
-    /**
-     * @test
-     * @covers ::getReply
-     */
-    function it_should_return_reply()
-    {
-        $payload = $this->getPayload();
-        $campaignEntity = new CampaignEntity($payload);
-
-        $this->assertEquals(Arr::get($payload, 'reply'), $campaignEntity->getReply());
+        $this->assertEquals($name, $payload['name']);
+        $this->assertEquals($subject, $payload['subject']);
+        $this->assertEquals($from, $payload['from']);
+        $this->assertEquals($reply, $payload['reply']);
+        $this->assertEquals($to, $payload['to']);
+        $this->assertEquals($template, $payload['template']);
+        $this->assertEquals($type, $payload['type']);
     }
 
     /**
@@ -121,18 +85,6 @@ class CampaignEntityTest extends TestCase
         $campaignEntity = new CampaignEntity($payload);
 
         $this->assertEquals(self::HTML_TYPE, $campaignEntity->getType());
-    }
-
-    /**
-     * @test
-     * @covers ::getTo
-     */
-    function it_should_return_to()
-    {
-        $payload = $this->getPayload();
-        $campaignEntity = new CampaignEntity($payload);
-
-        $this->assertEquals(Arr::get($payload, 'to'), $campaignEntity->getTo());
     }
 
     /**
@@ -173,12 +125,12 @@ class CampaignEntityTest extends TestCase
         $payload = $this->getPayload();
         $campaignEntity = new CampaignEntity($payload);
         $email = new Email(
-            $campaignEntity->getSubject(),
-            $campaignEntity->getFrom(),
-            $campaignEntity->getReply(),
-            $campaignEntity->getTo(),
-            $campaignEntity->getTemplate(),
-            $campaignEntity->getType()
+            $payload['subject'],
+            $payload['from'],
+            $payload['reply'],
+            $payload['to'],
+            $payload['template'],
+            'text/plain'
         );
 
         $this->assertEquals($email, $campaignEntity->getEmail());

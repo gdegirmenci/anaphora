@@ -14,10 +14,22 @@ class CampaignEntity
 {
     const TEXT = 'text';
 
-    /** @var array */
-    private $payload;
     /** @var int */
     private $campaignId;
+    /** @var string */
+    private $name;
+    /** @var string */
+    private $subject;
+    /** @var array */
+    private $from;
+    /** @var array */
+    private $reply;
+    /** @var array */
+    private $to;
+    /** @var string */
+    private $template;
+    /** @var string */
+    private $type;
 
     /**
      * CampaignPayload constructor.
@@ -25,47 +37,13 @@ class CampaignEntity
      */
     public function __construct(array $payload)
     {
-        $this->payload = $payload;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return Arr::get($this->payload, 'name');
-    }
-
-    /**
-     * @return string
-     */
-    public function getTemplate(): string
-    {
-        return Arr::get($this->payload, 'template');
-    }
-
-    /**
-     * @return string
-     */
-    public function getSubject(): string
-    {
-        return Arr::get($this->payload, 'subject');
-    }
-
-    /**
-     * @return array
-     */
-    public function getFrom(): array
-    {
-        return Arr::get($this->payload, 'from');
-    }
-
-    /**
-     * @return array
-     */
-    public function getReply(): array
-    {
-        return Arr::get($this->payload, 'reply');
+        $this->name = Arr::get($payload, 'name');
+        $this->subject = Arr::get($payload, 'subject');
+        $this->from = Arr::get($payload, 'from');
+        $this->reply = Arr::get($payload, 'reply');
+        $this->to = Arr::get($payload, 'to');
+        $this->template = Arr::get($payload, 'template');
+        $this->type = Arr::get($payload, 'type');
     }
 
     /**
@@ -73,19 +51,7 @@ class CampaignEntity
      */
     public function getType(): string
     {
-        if (Arr::get($this->payload, 'type') === self::TEXT) {
-            return EmailTypeEnums::TEXT_TYPE;
-        }
-
-        return EmailTypeEnums::HTML_TYPE;
-    }
-
-    /**
-     * @return array
-     */
-    public function getTo(): array
-    {
-        return Arr::get($this->payload, 'to');
+        return $this->type === self::TEXT ? EmailTypeEnums::TEXT_TYPE : EmailTypeEnums::HTML_TYPE;
     }
 
     /**
@@ -111,11 +77,11 @@ class CampaignEntity
     public function getEmail(): Email
     {
         return new Email(
-            $this->getSubject(),
-            $this->getFrom(),
-            $this->getReply(),
-            $this->getTo(),
-            $this->getTemplate(),
+            $this->subject,
+            $this->from,
+            $this->reply,
+            $this->to,
+            $this->template,
             $this->getType()
         );
     }
@@ -126,10 +92,10 @@ class CampaignEntity
     public function toSave(): array
     {
         return [
-            'name' => $this->getName(),
-            'template' => $this->getTemplate(),
+            'name' => $this->name,
+            'template' => $this->template,
             'type' => $this->getType(),
-            'to' => $this->getTo(),
+            'to' => $this->to,
         ];
     }
 }
