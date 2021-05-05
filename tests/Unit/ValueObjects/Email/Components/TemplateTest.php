@@ -19,8 +19,8 @@ class TemplateTest extends TestCase
 
     /**
      * @test
-     * @covers ::getType
      * @covers ::__construct
+     * @covers ::getType
      */
     function it_should_return_name()
     {

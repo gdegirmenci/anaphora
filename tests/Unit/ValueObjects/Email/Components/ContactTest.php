@@ -17,8 +17,8 @@ class ContactTest extends TestCase
 
     /**
      * @test
-     * @covers ::getName
      * @covers ::__construct
+     * @covers ::getName
      */
     function it_should_return_name()
     {

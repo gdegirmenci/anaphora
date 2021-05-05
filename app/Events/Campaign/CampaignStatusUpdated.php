@@ -10,8 +10,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
  */
 class CampaignStatusUpdated implements ShouldQueue
 {
+    /** @var int */
     private $campaignId;
+    /** @var int */
     private $status;
+    /** @var string */
     private $provider;
 
     /**

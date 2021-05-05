@@ -41,8 +41,8 @@ class CampaignServiceTest extends ServiceTestSuite
 
     /**
      * @test
-     * @covers ::create
      * @covers ::__construct
+     * @covers ::create
      */
     function it_should_return_success_with_dispatching_campaign_sender_dispatcher()
     {

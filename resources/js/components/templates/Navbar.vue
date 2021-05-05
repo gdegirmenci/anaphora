@@ -6,7 +6,7 @@
     dark
   >
     <v-container class="py-0 fill-height">
-      <v-toolbar-title class="font-weight-bold text-subtitle-1 mr-10">
+      <v-toolbar-title class="font-weight-bold text-subtitle-1 mr-10 d-none d-sm-flex">
         <span class="heading">
           {{ title }}
         </span>

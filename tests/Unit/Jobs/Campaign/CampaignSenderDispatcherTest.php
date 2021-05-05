@@ -25,8 +25,8 @@ class CampaignSenderDispatcherTest extends TestCase
 
     /**
      * @test
-     * @covers ::handle
      * @covers ::__construct
+     * @covers ::handle
      */
     function it_should_handle()
     {

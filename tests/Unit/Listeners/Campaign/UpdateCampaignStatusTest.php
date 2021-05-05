@@ -21,8 +21,8 @@ class UpdateCampaignStatusTest extends TestCase
 
     /**
      * @test
-     * @covers ::handle
      * @covers ::__construct
+     * @covers ::handle
      */
     function it_should_update_campaign_status()
     {

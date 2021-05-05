@@ -17,8 +17,8 @@ class CampaignStatusUpdatedTest extends TestCase
 
     /**
      * @test
-     * @covers ::getCampaignId
      * @covers ::__construct
+     * @covers ::getCampaignId
      */
     function it_should_return_campaign_id()
     {

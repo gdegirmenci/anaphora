@@ -13,7 +13,9 @@ use Illuminate\Pagination\LengthAwarePaginator;
  */
 class CampaignRepository implements CampaignRepositoryInterface
 {
+    /** @var Campaign */
     private $campaign;
+    /** @var CampaignLog */
     private $campaignLog;
 
     /**

@@ -63,8 +63,8 @@ class CircuitBreakerServiceTest extends ServiceTestSuite
 
     /**
      * @test
-     * @covers ::makeRequest
      * @covers ::__construct
+     * @covers ::makeRequest
      */
     function it_should_return_true_and_make_request()
     {
@@ -81,8 +81,8 @@ class CircuitBreakerServiceTest extends ServiceTestSuite
 
     /**
      * @test
-     * @covers ::makeRequest
      * @covers ::__construct
+     * @covers ::makeRequest
      */
     function it_should_return_false_and_dispatch_circuit_breaker_status_updated_event_when_thrown_an_exception()
     {

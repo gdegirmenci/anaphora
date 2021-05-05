@@ -63,8 +63,8 @@ class MailJetServiceTest extends ServiceTestSuite
 
     /**
      * @test
-     * @covers ::getUrl
      * @covers ::__construct
+     * @covers ::getUrl
      */
     function it_should_return_url()
     {

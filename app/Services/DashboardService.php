@@ -26,7 +26,7 @@ class DashboardService
     }
 
     /**
-     * @return void[]
+     * @return array
      */
     public function getDashboardData(): array
     {

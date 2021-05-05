@@ -20,7 +20,9 @@
         <v-icon>
           {{ createCampaignIcon }}
         </v-icon>
-        {{ createCampaignText }}
+        <span class="d-none d-sm-flex">
+          {{ createCampaignText }}
+        </span>
       </v-btn>
     </template>
     <v-card>
@@ -79,7 +81,7 @@
             </v-row>
             <v-row>
               <v-col
-                cols="12"
+                cols="6"
                 sm="6"
                 md="6"
               >
@@ -92,7 +94,7 @@
                 />
               </v-col>
               <v-col
-                cols="12"
+                cols="6"
                 sm="6"
                 md="6"
               >
@@ -107,7 +109,7 @@
             </v-row>
             <v-row>
               <v-col
-                cols="12"
+                cols="6"
                 sm="6"
                 md="6"
               >
@@ -120,7 +122,7 @@
                 />
               </v-col>
               <v-col
-                cols="12"
+                cols="6"
                 sm="6"
                 md="6"
               >
@@ -305,6 +307,9 @@ export default {
     },
 
     methods: {
+        /**
+         * @returns {void}
+         */
         async createCampaign() {
             if (this.$refs.form.validate()) {
                 this.dialog = false;

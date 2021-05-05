@@ -26,8 +26,8 @@ class UpdateCircuitBreakerStatusTest extends TestCase
 
     /**
      * @test
-     * @covers ::handle
      * @covers ::__construct
+     * @covers ::handle
      */
     function it_should_update_circuit_breaker_status()
     {
