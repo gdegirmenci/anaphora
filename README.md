@@ -248,7 +248,7 @@ Sending from SendGrid for later.
 ## MailJet Circuit: HALF-OPENED
 ## SendGrid Response: False
 ## MailJet Response: False (1st), False (2nd)
-If circuit is opened, sending from SendGrid for later.
+If circuit is opened, sending from MailJet for later.
 ```
 
 ### Provider Factory
