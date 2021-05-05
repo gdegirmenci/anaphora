@@ -195,6 +195,25 @@ Mainly, there are 3 statuses for circuits, `OPENED` `HALF-OPENED` and `CLOSED`.
 
 With keeping these status for each provider, the project is handling failures.
 
+After exceeding failed requests for the provider, circuit is opening. By default, threshold is 3.
+
+To close opened circuit, first of all provider should not give any failure for 5 minutes. Meanwhile, status will be opened.
+
+After 10 minutes, if there would not be any failed request, status would be closed again.
+```bash
+# Opening circuit flow
+
+            1 FAILED          3 FAILED  
+CLOSED  →   HALF-OPENED   →   OPENED
+
+--------------------------------------
+
+# Closing circuit flow
+
+5 MIN       5 MIN              
+OPENED  →   HALF-OPENED   →   CLOSED
+````
+
 ### Campaign Logs
 
 The project is keeping log for each campaign and provider. From database, logs could be found at `campaign_logs` table. The relation is HasMany, means a campaign could have more than one log.
