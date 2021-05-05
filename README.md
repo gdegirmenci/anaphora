@@ -178,7 +178,7 @@ Mainly, there are 3 statuses for circuits, `OPENED` `HALF-OPENED` and `CLOSED`.
 
 - `OPENED` → Service is not responding at all.
 - `HALF-OPENED` → Service is responding, but it gives error.
-- `CLOSED → Service is responding.
+- `CLOSED` → Service is responding.
 
 With keeping these status for each provider, the project is handling failures.
 
