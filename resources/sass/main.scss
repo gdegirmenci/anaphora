@@ -14,4 +14,14 @@
     button {
         font-family: $font-family, sans-serif !important;
     }
+    .ql-editor {
+        min-height: 100px;
+        color: $font-color;
+        .ql-font-serif {
+            font-family: 'Georgia', sans-serif !important;
+        }
+        .ql-font-monospace {
+            font-family: 'Courier New', monospace !important;
+        }
+    }
 }

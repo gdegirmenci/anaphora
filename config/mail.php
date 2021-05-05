@@ -108,5 +108,6 @@ return [
     ],
 
     'primary_provider' => env('PRIMARY_MAIL_PROVIDER', 'sendgrid'),
+    'circuit_breaker_threshold' => env('CIRCUIT_BREAKER_THRESHOLD', 3),
 
 ];

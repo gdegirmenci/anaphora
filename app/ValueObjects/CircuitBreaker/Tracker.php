@@ -56,7 +56,7 @@ final class Tracker
      */
     public function isFailedCountExceed(): bool
     {
-        return $this->getFailedCount() >= CircuitBreakerEnums::MAX_FAILED_COUNT;
+        return $this->getFailedCount() >= (int)config('mail.circuit_breaker_threshold');
     }
 
     /**
