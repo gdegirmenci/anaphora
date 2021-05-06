@@ -157,7 +157,7 @@ curl -X "POST" "http://anaphora.local/api/campaigns/create" \
     }
   ],
   "template": "Mail content.",
-	"type": "text"
+  "type": "text"
 }'
 ```
 
