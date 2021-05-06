@@ -262,11 +262,14 @@ After that, related service should be created under the folder `app\Services\Pro
 
 namespace App\Services\Providers;
 
+use App\Repositories\Campaign\CampaignRepository;
+use App\ValueObjects\Email\Email;
+
 /**
  * Class FooProviderService
  * @package App\Services\Providers
  */
-class FooProviderService extends BaseProvider
+class FooProviderService extends BaseProviderService
 {
     /**
      * FooProviderService constructor.
