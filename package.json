@@ -14,7 +14,7 @@
         "@mdi/font": "^5.9.55",
         "@typescript-eslint/eslint-plugin": "^4.22.0",
         "@typescript-eslint/parser": "^4.22.0",
-        "axios": "^0.19",
+        "axios": "^0.21",
         "cross-env": "^7.0",
         "deepmerge": "^4.2.2",
         "eslint": "^7.25.0",
